@@ -244,7 +244,11 @@ CHIP_ERROR matter_core_start(void)
     instance.InitAmebaLogSubsystem();
 #endif
 
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     wifi_set_autoreconnect(0); //Disable default autoreconnect
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+    wifi_config_autoreconnect(0);
+#endif
 #if defined(CONFIG_PLATFORM_8710C)
     matter_timer_init(); //currently 8721D cannot use this implementation
 #endif

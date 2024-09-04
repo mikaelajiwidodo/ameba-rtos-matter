@@ -1,5 +1,9 @@
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <platform_opts.h>
 #include <platform/platform_stdlib.h>
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#include <platform_stdlib.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,9 +32,13 @@ extern int FreeRTOS_errno;
 #elif defined(CONFIG_PLATFORM_8721D)
 #define MATTER_SW_RTC_TIMER_ID     TIMER2
 int FreeRTOS_errno = 0;
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#define MATTER_SW_RTC_TIMER_ID     TIMER2
 #endif
 
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #define errno FreeRTOS_errno
+#endif
 
 extern void vTaskDelay(const TickType_t xTicksToDelay);
 
@@ -38,6 +46,7 @@ static gtimer_t matter_rtc_timer;
 static uint64_t current_us = 0;
 static volatile uint32_t rtc_counter = 0;
 
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 BOOL UTILS_ValidateTimespec(const struct timespec *const pxTimespec)
 {
     BOOL xReturn = FALSE;
@@ -54,6 +63,7 @@ BOOL UTILS_ValidateTimespec(const struct timespec *const pxTimespec)
 
     return xReturn;
 }
+#endif
 
 #if defined(CONFIG_PLATFORM_8721D)
 int UTILS_TimespecToTicks(const struct timespec *const pxTimespec, TickType_t *const pxResult)
@@ -218,7 +228,7 @@ uint64_t ameba_get_clock_time(void)
     current_us = gtimer_read_us(&matter_rtc_timer);
     global_us = ((uint64_t)rtc_counter * US_OVERFLOW_MAX) + (current_us);
     return global_us;
-#elif defined(CONFIG_PLATFORM_8721D)
+#elif defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_AMEBADPLUS)
     return ((xTaskGetTickCount()) * configTICK_RATE_HZ);
 #endif
 }
