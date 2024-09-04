@@ -47,7 +47,7 @@
 #define INCLUDE_uxTaskGetStackSize              1
 #define INCLUDE_uxTaskGetFreeStackSize          1
 
-#elif defined(CONFIG_PLATFORM_8721D)
+#elif defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_AMEBADPLUS)
 
 /* Undefine existing macros */
 #undef configTOTAL_HEAP_SIZE
@@ -61,7 +61,11 @@
 #define CONFIG_DYNAMIC_HEAP_SIZE                0
 #define INCLUDE_uxTaskGetStackSize              1
 #define INCLUDE_uxTaskGetFreeStackSize          1
+#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#define secureconfigTOTAL_SRAM_HEAP_SIZE        ( ( size_t ) ( 20 * 1024 ) )
+#else
 #define secureconfigTOTAL_SRAM_HEAP_SIZE        ( ( size_t ) ( 0 * 1024 ) )
+#endif
 
 #endif /*CONFIG_PLATFORM_87XX*/
 

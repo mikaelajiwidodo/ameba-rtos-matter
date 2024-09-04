@@ -33,19 +33,50 @@ extern rtw_mode_t wifi_mode;
  *               WiFi Security
  ******************************************************/
 #define RTW_SECURITY_WPA_WPA2_MIXED    RTW_SECURITY_WPA_WPA2_MIXED_PSK
+#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#define RTW_SECURITY_WPA_TKIP_ENTERPRISE       (ENTERPRISE_ENABLED | RTW_SECURITY_WPA_TKIP_PSK)
+#define RTW_SECURITY_WPA_AES_ENTERPRISE        (ENTERPRISE_ENABLED | RTW_SECURITY_WPA_AES_PSK)
+#define RTW_SECURITY_WPA_MIXED_ENTERPRISE      (ENTERPRISE_ENABLED | RTW_SECURITY_WPA_MIXED_PSK)
+#define RTW_SECURITY_WPA2_TKIP_ENTERPRISE      (ENTERPRISE_ENABLED | RTW_SECURITY_WPA2_TKIP_PSK)
+#define RTW_SECURITY_WPA2_AES_ENTERPRISE       (ENTERPRISE_ENABLED | RTW_SECURITY_WPA2_AES_PSK)
+#define RTW_SECURITY_WPA2_MIXED_ENTERPRISE     (ENTERPRISE_ENABLED | RTW_SECURITY_WPA2_MIXED_PSK)
+#define RTW_SECURITY_WPA_WPA2_TKIP_ENTERPRISE  (ENTERPRISE_ENABLED | RTW_SECURITY_WPA_WPA2_TKIP_PSK)
+#define RTW_SECURITY_WPA_WPA2_AES_ENTERPRISE   (ENTERPRISE_ENABLED | RTW_SECURITY_WPA_WPA2_AES_PSK)
+#define RTW_SECURITY_WPA_WPA2_MIXED_ENTERPRISE (ENTERPRISE_ENABLED | RTW_SECURITY_WPA_WPA2_MIXED_PSK)
+#endif
 
 /******************************************************
  *               WiFi Connection Status
  ******************************************************/
 #define JOIN_HANDSHAKE_DONE            (uint32_t)(1 << 7)
 
-#if defined(CONFIG_PLATFORM_8721D)
+#if defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_AMEBADPLUS)
 #define IW_ENCODE_ALG_NONE             0
 #define IW_ENCODE_ALG_WEP              1
 #define IW_ENCODE_ALG_TKIP             2
 #define IW_ENCODE_ALG_CCMP             3
 #define IW_ENCODE_ALG_PMK              4
 #define IW_ENCODE_ALG_AES_CMAC         5
+#endif
+
+#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+/******************************************************
+ *               Wifi Network Mode
+ ******************************************************/
+#define rtw_network_mode_t int
+
+/******************************************************
+ *               WiFi Config
+ ******************************************************/
+typedef struct rtw_wifi_config {
+    unsigned int		boot_mode;
+    unsigned char 		ssid[32];
+    unsigned char		ssid_len;
+    unsigned char		security_type;
+    unsigned char		password[RTW_MAX_PSK_LEN+1];
+    unsigned char		password_len;
+    unsigned char		channel;
+} rtw_wifi_config_t;
 #endif
 
 /******************************************************
@@ -97,11 +128,19 @@ rtw_scan_result_t *matter_get_scan_results(void);
  * @param[in]  password_len   The length of the password.
  * @param[in]  key_id         The key ID used for the WiFi network.
  */
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 void matter_wifi_autoreconnect_hdl(
     rtw_security_t security_type,
     char *ssid, int ssid_len,
     char *password, int password_len,
     int key_id);
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+void matter_wifi_autoreconnect_hdl(
+    rtw_security_t security_type,
+    char *ssid, int ssid_len, char* bssid,
+    char *password, int password_len,
+    int key_id, char is_wps_trigger);
+#endif
 
 /**
  * @brief  Set the auto-reconnect mode for WiFi.
@@ -168,14 +207,22 @@ int matter_wifi_is_open_security(void);
  * @param[in]  interface: The WiFi interface to check.
  * @return  RTW_SUCCESS if ready to transceive, RTW_ERROR otherwise.
  */
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 int matter_wifi_is_ready_to_transceive(rtw_interface_t interface);
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+int matter_wifi_is_ready_to_transceive(enum rtw_interface_type interface);
+#endif
 
 /**
  * @brief  Check if the WiFi interface is up.
  * @param[in]  interface: The WiFi interface to check.
  * @return  RTW_SUCCESS if the interface is up, RTW_ERROR otherwise.
  */
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 int matter_wifi_is_up(rtw_interface_t interface);
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+int matter_wifi_is_up(enum rtw_interface_type interface);
+#endif
 
 /**
  * @brief  Get the BSSID of the connected access point.

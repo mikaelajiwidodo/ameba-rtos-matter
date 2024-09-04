@@ -8,6 +8,9 @@
 ********************************************************************************/
 #pragma once
 
+#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#include <FreeRTOS.h>
+#endif
 #include <platform_stdlib.h>
 
 class MatterThermostatUI
