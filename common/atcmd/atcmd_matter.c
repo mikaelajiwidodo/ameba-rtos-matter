@@ -1,7 +1,7 @@
 #include <platform_stdlib.h>
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <platform_opts.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #include <platform_autoconf.h>
 #include <FreeRTOS.h>
 #include <task.h>
@@ -11,7 +11,7 @@
 #if defined(CONFIG_MATTER) && CONFIG_MATTER
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <log_service.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #include <atcmd_service.h>
 #endif
 #include <main.h>
@@ -77,7 +77,7 @@ void fATmattershell(void *arg)
     {
         printf("No arguments provided for matter shell\n");
     }
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     {
         if(strcmp(arg, "factoryreset") == 0) {
             fATchipapp(NULL);
@@ -189,7 +189,7 @@ log_item_t at_matter_items[] = {
     {"^^^^", fATnetworklog},
 #endif /* CONFIG_ENABLE_AMEBA_DLOG_TEST */
 #endif // end of #if ATCMD_VER == ATVER_1
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     {"matter", fATmattershell, {NULL, NULL}},
 #endif // CONFIG_PLATFORM
 #endif
@@ -200,7 +200,7 @@ void at_matter_init(void)
     shell_queue = xQueueCreate(3, 256); // backlog 3 commands max
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     log_service_add_table(at_matter_items, sizeof(at_matter_items)/sizeof(at_matter_items[0]));
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     atcmd_service_add_table(at_matter_items, sizeof(at_matter_items)/sizeof(at_matter_items[0]));
 #endif // CONFIG_PLATFORM
 }

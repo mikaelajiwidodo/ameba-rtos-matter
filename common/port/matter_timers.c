@@ -1,7 +1,7 @@
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <platform_opts.h>
 #include <platform/platform_stdlib.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #include <platform_stdlib.h>
 #endif
 
@@ -32,7 +32,7 @@ extern int FreeRTOS_errno;
 #elif defined(CONFIG_PLATFORM_8721D)
 #define MATTER_SW_RTC_TIMER_ID     TIMER2
 int FreeRTOS_errno = 0;
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #define MATTER_SW_RTC_TIMER_ID     TIMER2
 #endif
 
@@ -228,7 +228,7 @@ uint64_t ameba_get_clock_time(void)
     current_us = gtimer_read_us(&matter_rtc_timer);
     global_us = ((uint64_t)rtc_counter * US_OVERFLOW_MAX) + (current_us);
     return global_us;
-#elif defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     return ((xTaskGetTickCount()) * configTICK_RATE_HZ);
 #endif
 }

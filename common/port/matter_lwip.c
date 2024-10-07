@@ -1,7 +1,7 @@
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <platform_opts.h>
 #include <platform/platform_stdlib.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #include <platform_stdlib.h>
 #include <platform_autoconf.h>
 #endif
@@ -33,7 +33,7 @@ unsigned char *matter_LwIP_GetIP(uint8_t idx)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return LwIP_GetIP(&xnetif[idx]);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     return LwIP_GetIP(idx);
 #endif
 }
@@ -42,7 +42,7 @@ unsigned char *matter_LwIP_GetGW(uint8_t idx)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return LwIP_GetGW(&xnetif[idx]);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     return LwIP_GetGW(idx);
 #endif
 }
@@ -51,7 +51,7 @@ uint8_t *matter_LwIP_GetMASK(uint8_t idx)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return LwIP_GetMASK(&xnetif[idx]);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     return LwIP_GetMASK(idx);
 #endif
 }
@@ -86,7 +86,7 @@ uint8_t *matter_LwIP_GetIPv6_linklocal(uint8_t idx)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return LwIP_GetIPv6_linklocal(&xnetif[idx]);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     return LwIP_GetIPv6_linklocal(idx);
 #endif
 }
@@ -96,7 +96,7 @@ uint8_t *matter_LwIP_GetIPv6_global(uint8_t idx)
 #if LWIP_IPV6_DHCP6 && (LWIP_VERSION_MAJOR >= 2) && (LWIP_VERSION_MINOR >= 1)
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return LwIP_GetIPv6_global(&xnetif[idx]);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     return LwIP_GetIPv6_global(idx);
 #endif
 #else
