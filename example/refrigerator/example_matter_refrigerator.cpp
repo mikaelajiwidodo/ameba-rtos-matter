@@ -3,14 +3,14 @@
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <platform/platform_stdlib.h>
 #include <platform_opts.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #include <platform_stdlib.h>
 #endif
 #include <basic_types.h>
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <wifi_constants.h>
 #include <wifi/wifi_conf.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #include <rtw_wifi_constants.h>
 #include <wifi_intf_drv_to_app_basic.h>
 #endif
@@ -26,7 +26,7 @@ static void example_matter_refrigerator_task(void *pvParameters)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     while (!(wifi_is_up(RTW_STA_INTERFACE) || wifi_is_up(RTW_AP_INTERFACE)))
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     while (!(wifi_is_running(WLAN0_IDX) || wifi_is_running(WLAN1_IDX))) 
 #endif
     {

@@ -17,7 +17,7 @@ extern "C" {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <platform/platform_stdlib.h>
 #include <platform_opts.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #include <platform_stdlib.h>
 #include <platform_autoconf.h>
 #endif

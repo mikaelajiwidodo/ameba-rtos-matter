@@ -1,9 +1,13 @@
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <platform_opts.h>
 #include <platform/platform_stdlib.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #include <platform_stdlib.h>
+#if defined(CONFIG_PLATFORM_AMEBADPLUS)
 #define MATTER_FACTORY_DATA (0x08400000 - SPI_FLASH_BASE)
+#elif defined(CONFIG_PLATFORM_AMEBASMART)
+#define MATTER_FACTORY_DATA (0x08600000 - SPI_FLASH_BASE)
+#endif
 #endif
 
 #ifdef __cplusplus
@@ -312,7 +316,7 @@ int32_t ReadFactory(uint8_t *buffer, uint16_t *pfactorydata_len)
     device_mutex_lock(RT_DEV_LOCK_FLASH);
     ret = flash_stream_read(&flash, address, length_bytes, (uint8_t *)pfactorydata_len);
     device_mutex_unlock(RT_DEV_LOCK_FLASH);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     ret = flash_stream_read(&flash, address, length_bytes, (uint8_t *)pfactorydata_len);
 #endif
 
@@ -329,7 +333,7 @@ int32_t ReadFactory(uint8_t *buffer, uint16_t *pfactorydata_len)
     device_mutex_lock(RT_DEV_LOCK_FLASH);
     ret = flash_stream_read(&flash, address+2, *pfactorydata_len, buffer);
     device_mutex_unlock(RT_DEV_LOCK_FLASH);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     ret = flash_stream_read(&flash, address+2, *pfactorydata_len, buffer);
 #endif
 
@@ -452,7 +456,7 @@ void matter_create_secure_context(void)
 
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     rtw_create_secure_context(MATTER_SECURE_CONTEXT_STACK_SIZE);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     rtos_create_secure_context(MATTER_SECURE_CONTEXT_STACK_SIZE);
 #endif
     secure_mbedtls_platform_set_calloc_free();

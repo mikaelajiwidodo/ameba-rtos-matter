@@ -33,7 +33,7 @@ extern rtw_mode_t wifi_mode;
  *               WiFi Security
  ******************************************************/
 #define RTW_SECURITY_WPA_WPA2_MIXED    RTW_SECURITY_WPA_WPA2_MIXED_PSK
-#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #define RTW_SECURITY_WPA_TKIP_ENTERPRISE       (ENTERPRISE_ENABLED | RTW_SECURITY_WPA_TKIP_PSK)
 #define RTW_SECURITY_WPA_AES_ENTERPRISE        (ENTERPRISE_ENABLED | RTW_SECURITY_WPA_AES_PSK)
 #define RTW_SECURITY_WPA_MIXED_ENTERPRISE      (ENTERPRISE_ENABLED | RTW_SECURITY_WPA_MIXED_PSK)
@@ -50,7 +50,7 @@ extern rtw_mode_t wifi_mode;
  ******************************************************/
 #define JOIN_HANDSHAKE_DONE            (uint32_t)(1 << 7)
 
-#if defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_AMEBADPLUS)
+#if defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #define IW_ENCODE_ALG_NONE             0
 #define IW_ENCODE_ALG_WEP              1
 #define IW_ENCODE_ALG_TKIP             2
@@ -59,7 +59,7 @@ extern rtw_mode_t wifi_mode;
 #define IW_ENCODE_ALG_AES_CMAC         5
 #endif
 
-#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 /******************************************************
  *               Wifi Network Mode
  ******************************************************/
@@ -134,7 +134,7 @@ void matter_wifi_autoreconnect_hdl(
     char *ssid, int ssid_len,
     char *password, int password_len,
     int key_id);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 void matter_wifi_autoreconnect_hdl(
     rtw_security_t security_type,
     char *ssid, int ssid_len, char* bssid,
@@ -209,7 +209,7 @@ int matter_wifi_is_open_security(void);
  */
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 int matter_wifi_is_ready_to_transceive(rtw_interface_t interface);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 int matter_wifi_is_ready_to_transceive(enum rtw_interface_type interface);
 #endif
 
@@ -220,7 +220,7 @@ int matter_wifi_is_ready_to_transceive(enum rtw_interface_type interface);
  */
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 int matter_wifi_is_up(rtw_interface_t interface);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 int matter_wifi_is_up(enum rtw_interface_type interface);
 #endif
 

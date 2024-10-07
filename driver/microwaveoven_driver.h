@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #include <FreeRTOS.h>
 #endif
 #include <platform_stdlib.h>

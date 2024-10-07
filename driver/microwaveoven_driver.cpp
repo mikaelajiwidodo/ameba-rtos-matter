@@ -5,7 +5,7 @@
 void MatterMicrowaveOven::Init(PinName pin)
 {
     mPwm_obj                        = (pwmout_t*) pvPortMalloc(sizeof(pwmout_t));
-#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     mPwm_obj->pwm_idx               = 1;
 #endif
     pwmout_init(mPwm_obj, pin);

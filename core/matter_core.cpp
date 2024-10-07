@@ -257,7 +257,7 @@ CHIP_ERROR matter_core_start(void)
 
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     wifi_set_autoreconnect(0); //Disable default autoreconnect
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     wifi_config_autoreconnect(0);
 #endif
 #if defined(CONFIG_PLATFORM_8710C)

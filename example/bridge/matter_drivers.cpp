@@ -468,7 +468,7 @@ void matter_driver_bridge_server_thread(void *param)
 
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     while (wifi_is_ready_to_transceive(RTW_STA_INTERFACE) != RTW_SUCCESS)
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     while(matter_wifi_is_ready_to_transceive(RTW_STA_INTERFACE) != RTW_SUCCESS)
 #endif
     {

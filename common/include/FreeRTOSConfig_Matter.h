@@ -47,7 +47,7 @@
 #define INCLUDE_uxTaskGetStackSize              1
 #define INCLUDE_uxTaskGetFreeStackSize          1
 
-#elif defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 
 /* Undefine existing macros */
 #undef configTOTAL_HEAP_SIZE

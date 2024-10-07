@@ -1,7 +1,7 @@
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <platform_opts.h>
 #include <platform/platform_stdlib.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #include <platform_stdlib.h>
 #include <FreeRTOS.h>
 #endif
@@ -23,7 +23,7 @@ u32 apNum = 0; // no of total AP scanned
 static u8 matter_wifi_trigger = 0;
 static rtw_scan_result_t matter_userdata[65] = {0};
 static char *matter_ssid;
-#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 rtw_mac_t ap_bssid;
 rtw_security_t sta_security_type;
 int error_flag = RTW_UNKNOWN;
@@ -40,7 +40,7 @@ struct matter_wifi_autoreconnect_param {
        char *password;
        int password_len;
        int key_id;
-#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
        char *bssid;
        char is_wps_trigger;
 #endif
@@ -64,7 +64,7 @@ void chip_connmgr_set_callback_func(chip_connmgr_callback p, void *data)
     chip_connmgr_callback_data = data;
 }
 
-#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 int matter_initiate_wifi_and_connect(rtw_network_info_t* connect_param)
 {
     sta_security_type = -1;
@@ -190,7 +190,7 @@ static rtw_result_t matter_scan_with_ssid_result_handler(rtw_scan_handler_result
 
     return RTW_SUCCESS;
 }
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 static rtw_result_t matter_scan_result_handler(unsigned int scanned_AP_num, void *user_data)
 {
     static int total_ap_num = 0;
@@ -247,7 +247,7 @@ void matter_scan_networks(void)
     apNum = 0; // reset counter at the start of scan
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     if ((ret = wifi_scan_networks(matter_scan_result_handler, matter_userdata)) != RTW_SUCCESS)
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     rtw_scan_param_t scan_param;
     memset(&scan_param, 0, sizeof(scan_param));
     scan_param.scan_user_callback = matter_scan_result_handler;
@@ -274,7 +274,7 @@ void matter_scan_networks_with_ssid(const unsigned char *ssid, size_t length)
 
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     if ((ret = wifi_scan_networks(matter_scan_with_ssid_result_handler, matter_userdata)) != RTW_SUCCESS)
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     rtw_scan_param_t scan_param;
     memset(&scan_param, 0, sizeof(scan_param));
     scan_param.scan_user_callback = matter_scan_result_handler;
@@ -353,7 +353,7 @@ static void matter_wifi_autoreconnect_thread(void *param)
 
     matter_param_indicator = NULL;
     rtw_delete_task(&matter_wifi_autoreconnect_task);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 #if defined(CONFIG_MATTER_SECURE) && (CONFIG_MATTER_SECURE == 1)
     rtos_create_secure_context(configMINIMAL_SECURE_STACK_SIZE);
 #endif
@@ -405,7 +405,7 @@ void matter_wifi_autoreconnect_hdl(rtw_security_t security_type,
                             char *ssid, int ssid_len,
                             char *password, int password_len,
                             int key_id)
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 void matter_wifi_autoreconnect_hdl(rtw_security_t security_type,
                             char *ssid, int ssid_len, char* bssid,
                             char *password, int password_len,
@@ -420,7 +420,7 @@ void matter_wifi_autoreconnect_hdl(rtw_security_t security_type,
     param.password = password;
     param.password_len = password_len;
     param.key_id = key_id;
-#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 	param.bssid = bssid;
 	param.is_wps_trigger = is_wps_trigger;
 #endif
@@ -435,7 +435,7 @@ void matter_wifi_autoreconnect_hdl(rtw_security_t security_type,
             rtw_msleep_os(2);
             u32 passing_tick = rtw_get_current_time() - start_tick;
             if (rtw_systime_to_sec(passing_tick) >= 2)
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
         u32 start_tick = rtos_time_get_current_system_time_ms();
         while (1) {
             rtos_time_delay_ms(2);
@@ -456,7 +456,7 @@ void matter_wifi_autoreconnect_hdl(rtw_security_t security_type,
 
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     rtw_create_task(&matter_wifi_autoreconnect_task, (const char *)"matter_wifi_autoreconnect", 512, tskIDLE_PRIORITY + 1, matter_wifi_autoreconnect_thread, &param);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     rtos_task_create(&matter_wifi_autoreconnect_task.task, (const char *)"matter_wifi_autoreconnect", matter_wifi_autoreconnect_thread, &param, 2048, 1);
 #endif
 }
@@ -486,7 +486,7 @@ void matter_set_autoreconnect(uint8_t mode)
         rltk_wlan_set_autoreconnect(WLAN0_NAME, mode, AUTO_RECONNECT_COUNT, AUTO_RECONNECT_INTERVAL);
 #elif defined(CONFIG_PLATFORM_8721D)
         wext_set_autoreconnect(WLAN0_NAME, mode, AUTO_RECONNECT_COUNT, AUTO_RECONNECT_INTERVAL);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
         wifi_config_autoreconnect(mode);
 #endif
     }
@@ -559,7 +559,7 @@ static int matter_get_ap_security_mode(IN char *ssid, OUT rtw_security_t *securi
     }
 
     return 0;
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     volatile int ret = RTW_SUCCESS;
     rtw_scan_param_t scan_param;
     
@@ -607,7 +607,7 @@ int matter_wifi_connect(
     uint8_t connect_channel;
     int security_retry_count = 0;
     int err = 0;
-#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     rtw_network_info_t connect_param = {0};
 #endif
 
@@ -647,7 +647,7 @@ int matter_wifi_connect(
 
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     err = wifi_connect(ssid, security_type, password, strlen(ssid), strlen(password), key_id, NULL);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     strncpy(connect_param.ssid.val, ssid, sizeof(connect_param.ssid.val) - 1);
     connect_param.ssid.len = ssid_len;
     memset(connect_param.bssid.octet, 0, ETH_ALEN);
@@ -678,7 +678,7 @@ int matter_wifi_on(rtw_mode_t mode)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return wifi_on(mode);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     int ret = -1;
     if (wifi_mode == mode)
     {
@@ -714,7 +714,7 @@ int matter_wifi_set_mode(rtw_mode_t mode)
     }
 
     return wifi_set_mode(mode);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     return matter_wifi_on(mode);
 #endif
 }
@@ -728,7 +728,7 @@ int matter_wifi_is_open_security(void)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     if (wifi_get_sta_security_type() == RTW_SECURITY_OPEN)
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     if(sta_security_type == RTW_SECURITY_OPEN)
 #endif
     {
@@ -748,7 +748,7 @@ int matter_wifi_is_up(rtw_interface_t interface)
 {
     return wifi_is_up(interface);
 }
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
 int matter_wifi_is_ready_to_transceive(enum rtw_interface_type interface)
 {
     switch (interface)
@@ -784,7 +784,7 @@ int matter_wifi_get_ap_bssid(unsigned char *bssid)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return wifi_get_ap_bssid(bssid);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     if( (int) RTW_SUCCESS == matter_wifi_is_ready_to_transceive(RTW_STA_INTERFACE)){
         memcpy(bssid, ap_bssid.octet, ETH_ALEN);
         return RTW_SUCCESS;
@@ -797,7 +797,7 @@ int matter_wifi_get_last_error(void)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return wifi_get_last_error();
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     return error_flag;
 #endif
 }
@@ -806,7 +806,7 @@ int matter_wifi_get_mac_address(char *mac)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return wifi_get_mac_address(mac);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     rtw_mac_t mac_struct = {0};
     int ret = wifi_get_mac_address(WLAN0_IDX, &mac_struct, 0);
     DiagSnPrintf(mac, 32, "%02X:%02X:%02X:%02X:%02X:%02X", mac_struct.octet[0], mac_struct.octet[1],
@@ -819,7 +819,7 @@ int matter_wifi_get_network_mode(rtw_network_mode_t *pmode)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return wifi_get_network_mode(pmode);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     *pmode = wifi_get_network_mode();
     return 0;
 #endif
@@ -829,7 +829,7 @@ int matter_wifi_get_rssi(int *prssi)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return wifi_get_rssi(prssi);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     int ret;
     rtw_phy_statistics_t phy_statistics;
     ret = wifi_fetch_phy_statistic(&phy_statistics);
@@ -865,7 +865,7 @@ int matter_wifi_get_security_type(uint8_t wlan_idx, uint16_t *alg, uint8_t *key_
         ret = RTW_ERROR;
         break;
     }
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     rtw_wifi_setting_t setting = {0};
     if (wifi_get_setting(wlan_idx, &setting) < 0)
     {
@@ -901,7 +901,7 @@ int matter_wifi_get_setting(unsigned char wlan_idx, rtw_wifi_setting_t *psetting
         ret = RTW_ERROR;
         break;
     }
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     ret = wifi_get_setting(wlan_idx, psetting);
 #endif
 
@@ -932,7 +932,7 @@ int matter_wifi_get_wifi_channel_number(uint8_t wlan_idx, uint8_t *ch)
         ret = RTW_ERROR;
         break;
     }
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     if(wifi_get_channel(wlan_idx, ch) < 0)
     {
         ret = RTW_ERROR;
@@ -946,7 +946,7 @@ int matter_get_sta_wifi_info(rtw_wifi_setting_t *pSetting)
 {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return wifi_get_setting((const char *)WLAN0_NAME, pSetting);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
     return wifi_get_setting(WLAN0_IDX, pSetting);
 #endif
 }
