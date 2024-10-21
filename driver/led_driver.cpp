@@ -8,7 +8,7 @@
 void MatterLED::Init(PinName pin)
 {
     mPwm_obj                        = (pwmout_t*) pvPortMalloc(sizeof(pwmout_t));
-#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
     mPwm_obj->pwm_idx               = 1;
 #endif
     pwmout_init(mPwm_obj, pin);
@@ -46,7 +46,7 @@ void MatterLED::Init(PinName redpin, PinName greenpin, PinName bluepin)
     pwmout_init(mPwm_red, redpin);
     pwmout_init(mPwm_green, bluepin);
     pwmout_init(mPwm_blue, greenpin);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
     mPwm_red->pwm_idx               = 1;
     mPwm_green->pwm_idx             = 2;
     mPwm_blue->pwm_idx              = 3;
@@ -98,7 +98,7 @@ void MatterLED::Init(PinName redpin, PinName greenpin, PinName bluepin, PinName 
     pwmout_init(mPwm_blue, greenpin);
     pwmout_init(mPwm_cwhite, cwhitepin);
     pwmout_init(mPwm_wwhite, wwhitepin);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
     mPwm_red->pwm_idx               = 1;
     mPwm_green->pwm_idx             = 2;
     mPwm_blue->pwm_idx              = 3;

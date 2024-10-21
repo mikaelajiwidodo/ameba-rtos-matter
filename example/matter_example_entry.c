@@ -1,6 +1,6 @@
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <platform_opts.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <platform_autoconf.h>
 #endif
 
@@ -34,7 +34,7 @@
  */
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 void matter_example_entry(void)
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 void app_example(void)
 #endif
 {

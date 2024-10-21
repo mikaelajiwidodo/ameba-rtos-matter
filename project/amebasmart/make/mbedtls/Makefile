@@ -20,7 +20,7 @@ OBJS =
 #                              RULES TO GENERATE TARGETS                      #
 #*****************************************************************************#
 all: CORE_TARGETS COPY_RAM_OBJS
-ifeq ($(CONFIG_MATTER_EN), y)
+ifeq ($(MBEDTLS_MATTER_ENABLE), y)
 	@make -C mbedtls-2.28.1 all
 endif
 
@@ -33,7 +33,7 @@ CORE_TARGETS: $(OBJS)
 #                              CLEAN GENERATED FILES                          #
 #*****************************************************************************#
 clean: CLEAN_OBJS
-ifeq ($(CONFIG_MATTER_EN), y)
+ifeq ($(MBEDTLS_MATTER_ENABLE), y)
 	@make -C mbedtls-2.28.1 clean
 endif
 

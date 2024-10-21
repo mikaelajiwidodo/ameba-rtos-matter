@@ -32,14 +32,14 @@ extern "C" {
 
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <wifi_structures.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <wifi_intf_drv_to_app_basic.h>
 #endif
 
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <matter_dcts.h>
 #include <matter_fs.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <matter_kvs.h>
 #endif
 #include <matter_lwip.h>
