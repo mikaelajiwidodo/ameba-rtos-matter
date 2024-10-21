@@ -21,6 +21,26 @@ extern "C" {
 
 #include <wifi_conf.h>
 #include <lwip_netconf.h>
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+#include "rtw_wifi_constants.h"
+#endif
+
+/******************************************************
+ *         Variables Mapping For ameba-rtos
+ ******************************************************/
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+typedef u8 rtw_mode_t;
+typedef u8 rtw_interface_t;
+typedef int rtw_network_mode_t;
+typedef int rtw_result_t;
+typedef struct rtw_scan_result rtw_scan_result_t;
+typedef enum rtw_security rtw_security_t;
+typedef struct _rtw_wifi_setting_t rtw_wifi_setting_t;
+typedef struct _rtw_scan_param_t rtw_scan_param_t;
+typedef struct _rtw_mac_t rtw_mac_t;
+typedef struct _rtw_network_info_t rtw_network_info_t;
+typedef struct _rtw_phy_statistics_t rtw_phy_statistics_t;
+#endif
 
 /******************************************************
  *               Other Variables
@@ -33,7 +53,7 @@ extern rtw_mode_t wifi_mode;
  *               WiFi Security
  ******************************************************/
 #define RTW_SECURITY_WPA_WPA2_MIXED    RTW_SECURITY_WPA_WPA2_MIXED_PSK
-#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #define RTW_SECURITY_WPA_TKIP_ENTERPRISE       (ENTERPRISE_ENABLED | RTW_SECURITY_WPA_TKIP_PSK)
 #define RTW_SECURITY_WPA_AES_ENTERPRISE        (ENTERPRISE_ENABLED | RTW_SECURITY_WPA_AES_PSK)
 #define RTW_SECURITY_WPA_MIXED_ENTERPRISE      (ENTERPRISE_ENABLED | RTW_SECURITY_WPA_MIXED_PSK)
@@ -50,7 +70,7 @@ extern rtw_mode_t wifi_mode;
  ******************************************************/
 #define JOIN_HANDSHAKE_DONE            (uint32_t)(1 << 7)
 
-#if defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#if defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #define IW_ENCODE_ALG_NONE             0
 #define IW_ENCODE_ALG_WEP              1
 #define IW_ENCODE_ALG_TKIP             2
@@ -59,12 +79,7 @@ extern rtw_mode_t wifi_mode;
 #define IW_ENCODE_ALG_AES_CMAC         5
 #endif
 
-#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
-/******************************************************
- *               Wifi Network Mode
- ******************************************************/
-#define rtw_network_mode_t int
-
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 /******************************************************
  *               WiFi Config
  ******************************************************/
@@ -77,6 +92,33 @@ typedef struct rtw_wifi_config {
     unsigned char		password_len;
     unsigned char		channel;
 } rtw_wifi_config_t;
+
+/******************************************************
+ *               WiFi Interface
+ ******************************************************/
+
+#define RTW_STA_INTERFACE WLAN0_IDX
+#define RTW_AP_INTERFACE WLAN1_IDX
+
+/******************************************************
+ *               Wifi Mode
+ ******************************************************/
+
+#define RTW_MODE_STA_AP 3
+
+/******************************************************
+ *               Wifi Connect Error
+ ******************************************************/
+
+enum rtw_connect_error_flag_t {
+	RTW_NO_ERROR,        /**< no error */
+	RTW_NONE_NETWORK,   /**< none network */
+	RTW_WRONG_PASSWORD, /**< wrong password */
+	RTW_4WAY_HANDSHAKE_TIMEOUT, /**< 4 way handshake timeout*/
+	RTW_CONNECT_FAIL,  /**< connect fail*/
+	RTW_DHCP_FAIL,        /**< dhcp fail*/
+	RTW_UNKNOWN,         /**< unknown*/
+};
 #endif
 
 /******************************************************
@@ -134,12 +176,8 @@ void matter_wifi_autoreconnect_hdl(
     char *ssid, int ssid_len,
     char *password, int password_len,
     int key_id);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
-void matter_wifi_autoreconnect_hdl(
-    rtw_security_t security_type,
-    char *ssid, int ssid_len, char* bssid,
-    char *password, int password_len,
-    int key_id, char is_wps_trigger);
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+void matter_reconn_task_hdl(void *param);
 #endif
 
 /**
@@ -207,22 +245,14 @@ int matter_wifi_is_open_security(void);
  * @param[in]  interface: The WiFi interface to check.
  * @return  RTW_SUCCESS if ready to transceive, RTW_ERROR otherwise.
  */
-#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 int matter_wifi_is_ready_to_transceive(rtw_interface_t interface);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
-int matter_wifi_is_ready_to_transceive(enum rtw_interface_type interface);
-#endif
 
 /**
  * @brief  Check if the WiFi interface is up.
  * @param[in]  interface: The WiFi interface to check.
  * @return  RTW_SUCCESS if the interface is up, RTW_ERROR otherwise.
  */
-#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 int matter_wifi_is_up(rtw_interface_t interface);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
-int matter_wifi_is_up(enum rtw_interface_type interface);
-#endif
 
 /**
  * @brief  Get the BSSID of the connected access point.

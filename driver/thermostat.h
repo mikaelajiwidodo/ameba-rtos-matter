@@ -8,7 +8,7 @@
 ********************************************************************************/
 #pragma once
 
-#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <FreeRTOS.h>
 #endif
 #include <platform_stdlib.h>

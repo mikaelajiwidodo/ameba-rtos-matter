@@ -2,7 +2,7 @@
 #                            Basic Configurations                             #
 #*****************************************************************************#
 
-MAIN_ROOTDIR = $(shell pwd)/../../../../../amebasmart_gcc_project/project_km4/asdk
+MAIN_ROOTDIR = $(shell pwd)/../../../../../amebasmart_gcc_project/project_ap/asdk
 MAKE_INCLUDE_GEN = $(ABS_ROOTDIR)/Makefile.include.gen
 
 CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \

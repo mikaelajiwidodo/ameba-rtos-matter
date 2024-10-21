@@ -31,7 +31,7 @@
 
 #include <mbedtls/version.h>
 
-#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <platform_autoconf.h>
 #endif
 
@@ -44,7 +44,7 @@
 #include <rom_ssl_ram_map.h>
 #define RTL_HW_CRYPTO
 #define SUPPORT_HW_SW_CRYPTO
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <rom_ssl_ram_map.h>
 #define MBEDTLS_VERSION_CONVERT(a,b,c)	(((a) << 16) + ((b) << 8) + (c))
 #ifndef MBEDTLS_VERSION
@@ -3540,7 +3540,7 @@
 #if (MBEDTLS_VERSION_NUMBER < 0x03000000)
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <check_config.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART)
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <mbedtls/check_config.h>
 #endif
 #endif
