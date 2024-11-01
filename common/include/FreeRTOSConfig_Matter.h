@@ -47,7 +47,7 @@
 #define INCLUDE_uxTaskGetStackSize              1
 #define INCLUDE_uxTaskGetFreeStackSize          1
 
-#elif defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+#elif defined(CONFIG_PLATFORM_8721D)
 
 /* Undefine existing macros */
 #undef configTOTAL_HEAP_SIZE
@@ -61,12 +61,24 @@
 #define CONFIG_DYNAMIC_HEAP_SIZE                0
 #define INCLUDE_uxTaskGetStackSize              1
 #define INCLUDE_uxTaskGetFreeStackSize          1
-#if defined(CONFIG_PLATFORM_AMEBADPLUS)
+#define secureconfigTOTAL_SRAM_HEAP_SIZE        ( ( size_t ) ( 0 * 1024 ) )
+
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+
+/* Undefine existing macros */
+#undef INCLUDE_uxTaskGetStackSize
+#undef INCLUDE_uxTaskGetFreeStackSize
+#undef secureconfigTOTAL_SRAM_HEAP_SIZE
+
+/* Define new values */
+#define INCLUDE_uxTaskGetStackSize              1
+#define INCLUDE_uxTaskGetFreeStackSize          1
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) && defined(configENABLE_TRUSTZONE) && (configENABLE_TRUSTZONE == 1)
 #define secureconfigTOTAL_SRAM_HEAP_SIZE        ( ( size_t ) ( 20 * 1024 ) )
 #else
 #define secureconfigTOTAL_SRAM_HEAP_SIZE        ( ( size_t ) ( 0 * 1024 ) )
 #endif
 
-#endif /*CONFIG_PLATFORM_87XX*/
+#endif /*CONFIG_PLATFORM*/
 
 #endif /* FREERTOS_CONFIG_MATTER_H */
