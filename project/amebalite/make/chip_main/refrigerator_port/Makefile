@@ -59,7 +59,6 @@ vpath %.c $(DIR) $(shell find $(DIR) -type d)
 
 GLOBAL_CFLAGS += -DCHIP_PROJECT=1
 GLOBAL_CFLAGS += -DCHIP_ADDRESS_RESOLVE_IMPL_INCLUDE_HEADER=\"lib/address_resolve/AddressResolve_DefaultImpl.h\"
-GLOBAL_CFLAGS += -Wno-register
 GLOBAL_CFLAGS += -DCONFIG_EXAMPLE_MATTER_REFRIGERATOR=1
 
 #*****************************************************************************#

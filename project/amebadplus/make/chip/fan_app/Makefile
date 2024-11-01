@@ -14,7 +14,6 @@ OUTPUT_DIR = $(BASEDIR)/component/application/matter/example/fan/build/chip
 #*****************************************************************************#
 
 GLOBAL_CFLAGS += -DCHIP_PROJECT=1
-GLOBAL_CFLAGS += -Wno-register
 
 CHIP_CFLAGS = $(GLOBAL_CFLAGS)
 CHIP_CXXFLAGS += $(GLOBAL_CFLAGS)

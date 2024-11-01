@@ -26,23 +26,6 @@ extern "C" {
 #endif
 
 /******************************************************
- *         Variables Mapping For ameba-rtos
- ******************************************************/
-#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-typedef u8 rtw_mode_t;
-typedef u8 rtw_interface_t;
-typedef int rtw_network_mode_t;
-typedef int rtw_result_t;
-typedef struct rtw_scan_result rtw_scan_result_t;
-typedef enum rtw_security rtw_security_t;
-typedef struct _rtw_wifi_setting_t rtw_wifi_setting_t;
-typedef struct _rtw_scan_param_t rtw_scan_param_t;
-typedef struct _rtw_mac_t rtw_mac_t;
-typedef struct _rtw_network_info_t rtw_network_info_t;
-typedef struct _rtw_phy_statistics_t rtw_phy_statistics_t;
-#endif
-
-/******************************************************
  *               Other Variables
  ******************************************************/
 extern u32 apNum;
@@ -80,6 +63,12 @@ extern rtw_mode_t wifi_mode;
 #endif
 
 #if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+
+/******************************************************
+ *         Wifi Network Mode (BGN)
+ ******************************************************/
+typedef int rtw_network_mode_t;
+
 /******************************************************
  *               WiFi Config
  ******************************************************/
@@ -97,14 +86,9 @@ typedef struct rtw_wifi_config {
  *               WiFi Interface
  ******************************************************/
 
+typedef u8 rtw_interface_t;
 #define RTW_STA_INTERFACE WLAN0_IDX
 #define RTW_AP_INTERFACE WLAN1_IDX
-
-/******************************************************
- *               Wifi Mode
- ******************************************************/
-
-#define RTW_MODE_STA_AP 3
 
 /******************************************************
  *               Wifi Connect Error
@@ -125,9 +109,9 @@ enum rtw_connect_error_flag_t {
  *               Matter WiFi Event
  ******************************************************/
 typedef enum{
-    MATTER_WIFI_EVENT_CONNECT                = WIFI_EVENT_CONNECT,
-    MATTER_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE = WIFI_EVENT_FOURWAY_HANDSHAKE_DONE,
-    MATTER_WIFI_EVENT_DISCONNECT             = WIFI_EVENT_DISCONNECT,
+    MATTER_WIFI_EVENT_CONNECT                = WIFI_EVENT_STA_ASSOC,
+    MATTER_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE = WIFI_EVENT_WPA_STA_4WAY_RECV,
+    MATTER_WIFI_EVENT_DISCONNECT             = WIFI_EVENT_STA_DISASSOC,
     MATTER_WIFI_EVENT_DHCP6_DONE             = WIFI_EVENT_DHCP6_DONE,
 } matter_wifi_event;
 

@@ -3,7 +3,7 @@
  * Copyright(c) 2022, Realtek Semiconductor Corporation. All rights reserved.
  *******************************************************************************
  */
-#if defined(BLE_MATTER_EXAMPLE_SET2) && BLE_MATTER_EXAMPLE_SET2
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <stdio.h>
 #include <string.h>
 #include <osif.h>

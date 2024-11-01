@@ -77,22 +77,20 @@ int matter_initiate_wifi_and_connect(rtw_network_info_t* connect_param)
     {
         sta_security_type = connect_param->security_type;
         memcpy(&ap_bssid, connect_param->bssid.octet, ETH_ALEN);
-        wifi_indication(WIFI_EVENT_CONNECT, NULL, 0, 0);
+        wifi_indication(WIFI_EVENT_STA_ASSOC, NULL, 0, 0);
         // wifi_join_status_indicate(RTW_JOINSTATUS_SUCCESS);
         wifi_indication(WIFI_EVENT_JOIN_STATUS, NULL, 0, RTW_JOINSTATUS_SUCCESS);
     }
     else if(rtw_join_status == RTW_JOINSTATUS_FAIL)
     {
-        wifi_indication(WIFI_EVENT_DISCONNECT, NULL, 0, 0);
+        wifi_indication(WIFI_EVENT_STA_DISASSOC, NULL, 0, 0);
         switch (error_flag)
         {
-            case RTW_ERROR:
-            case RTW_BUSY:
-            case RTW_NOMEM:
-                error_flag = RTW_UNKNOWN;
+            case RTW_CONNECT_SUCCESS:
+                error_flag = RTW_NO_ERROR;
                 break;
-            case RTW_TIMEOUT:
-                error_flag = RTW_4WAY_HANDSHAKE_TIMEOUT;
+            case RTW_CONNECT_UNKNOWN_FAIL:
+                error_flag = RTW_UNKNOWN;
                 break;
             case RTW_CONNECT_SCAN_FAIL:
                 error_flag = RTW_NONE_NETWORK;
@@ -102,7 +100,6 @@ int matter_initiate_wifi_and_connect(rtw_network_info_t* connect_param)
             case RTW_CONNECT_4WAY_HANDSHAKE_FAIL:
                 error_flag = RTW_CONNECT_FAIL;
                 break;
-            case RTW_CONNECT_INVALID_KEY:
             case RTW_CONNECT_AUTH_PASSWORD_WRONG:
             case RTW_CONNECT_4WAY_PASSWORD_WRONG:
                 error_flag = RTW_WRONG_PASSWORD;
