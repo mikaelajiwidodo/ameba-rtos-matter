@@ -59,6 +59,7 @@ include $(MATTER_INCLUDE_HDR)
 # -------------------------------------------------------------------
 
 INCLUDES += -I$(CHIPDIR)/examples/platform/ameba
+INCLUDES += -I$(CHIPDIR)/examples/platform/ameba/observer
 INCLUDES += -I$(CHIPDIR)/examples/providers
 INCLUDES += -I$(CHIPDIR)/src
 INCLUDES += -I$(CHIPDIR)/src/app
@@ -73,7 +74,6 @@ INCLUDES += -I$(CHIPDIR)/third_party/nlassert/repo/include
 INCLUDES += -I$(CHIPDIR)/third_party/nlio/repo/include
 INCLUDES += -I$(CHIPDIR)/third_party/nlunit-test/repo/src
 INCLUDES += -I$(CHIPDIR)/zzz_generated/app-common
-INCLUDES += -I$(CHIPDIR)/examples/all-clusters-app/ameba/main/include #to get AmebaObserver.h
 INCLUDES += -I$(CHIPDIR)/examples/ota-requestor-app/ameba/build/chip/gen/include
 INCLUDES += -I$(CHIPDIR)/examples/ota-requestor-app/ameba/main/include
 INCLUDES += -I$(CODEGENDIR)

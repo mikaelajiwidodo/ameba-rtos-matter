@@ -81,6 +81,7 @@ GLOBAL_CFLAGS += -DCONFIG_ENABLE_CHIP_SHELL=1
 #*****************************************************************************#
 
 IFLAGS += -I$(CHIPDIR)/examples/platform/ameba
+IFLAGS += -I$(CHIPDIR)/examples/platform/ameba/observer
 IFLAGS += -I$(CHIPDIR)/examples/providers
 IFLAGS += -I$(CHIPDIR)/src/
 IFLAGS += -I$(CHIPDIR)/src/app/

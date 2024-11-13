@@ -60,6 +60,7 @@ include $(MATTER_INCLUDE_HDR)
 # -------------------------------------------------------------------
 
 INCLUDES += -I$(CHIPDIR)/examples/platform/ameba
+INCLUDES += -I$(CHIPDIR)/examples/platform/ameba/observer
 INCLUDES += -I$(CHIPDIR)/examples/providers
 INCLUDES += -I$(CHIPDIR)/src
 INCLUDES += -I$(CHIPDIR)/src/app
