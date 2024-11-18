@@ -514,38 +514,6 @@ static rtk_bt_evt_cb_ret_t ble_peripheral_gap_app_callback(uint8_t evt_code, voi
 				DiagPrintf("[%s]Malloc failed\r\n");
 		}
 
-#if !defined(RTK_BLE_5_0_AE_ADV_SUPPORT) || !RTK_BLE_5_0_AE_ADV_SUPPORT
-		rtk_bt_le_gap_dev_state_t dev_state;
-		if (rtk_bt_le_gap_get_dev_state(&dev_state) == RTK_BT_OK &&
-			dev_state.gap_adv_state == RTK_BT_LE_ADV_STATE_IDLE) {
-#if defined(RTK_BLE_PRIVACY_SUPPORT) && RTK_BLE_PRIVACY_SUPPORT
-			if (privacy_enable) {
-				uint8_t bond_size = 0;
-				// adv_param.own_addr_type = 2;
-				BT_APP_PROCESS(rtk_bt_le_sm_get_bond_num(&bond_size));
-				if (bond_size != 0) {
-#if PRIVACY_USE_DIR_ADV_WHEN_BONDED
-					rtk_bt_le_bond_info_t bond_info = {0};
-					uint8_t bond_num = 1;
-					rtk_bt_le_sm_get_bond_info(&bond_info, &bond_num);
-					adv_param.type = RTK_BT_LE_ADV_TYPE_DIRECT_IND_LOW;
-					adv_param.peer_addr.type = 0;
-					memcpy(adv_param.peer_addr.addr_val, bond_info.ident_addr.addr_val, RTK_BD_ADDR_LEN);
-					adv_param.own_addr_type = 2;
-#endif /* PRIVACY_USE_DIR_ADV_WHEN_BONDED */
-					if (privacy_whitelist) {
-						adv_param.filter_policy = RTK_BT_LE_ADV_FILTER_ALLOW_SCAN_WLST_CON_WLST;
-					} else {
-						adv_param.filter_policy = RTK_BT_LE_ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY;
-					}
-				}
-			}
-#endif /* RTK_BLE_PRIVACY_SUPPORT */
-			DiagPrintf("[APP] Reconnect ADV starting, adv type:%d,  own_addr_type: %d, filter_policy: %d\r\n"
-					, adv_param.type,  adv_param.own_addr_type, adv_param.filter_policy);
-			BT_APP_PROCESS(rtk_bt_le_gap_start_adv(&adv_param));
-		}
-#endif /* RTK_BLE_5_0_AE_ADV_SUPPORT */
 		/* gatts action */
 		app_server_disconnect(disconn_ind->conn_handle);
 		break;
