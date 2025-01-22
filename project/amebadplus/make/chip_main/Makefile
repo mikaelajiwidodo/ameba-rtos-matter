@@ -43,6 +43,6 @@ clean: CLEAN_OBJS
 	@make -C lighting_port clean
 	@make -C microwaveoven_port clean
 	@make -C refrigerator_port clean
-	# @make -C thermostat_port clean
+	@make -C thermostat_port clean
 
 -include $(DEPS)

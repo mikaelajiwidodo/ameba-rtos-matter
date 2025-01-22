@@ -180,5 +180,6 @@ $(STATIC_LIB):$(OBJS)
 #*****************************************************************************#
 clean: CLEAN_OBJS
 	$(call CLEAN_FUNC)
+	rm -f $(MATTER_EXAMPLEDIR)/fan/fan-app-ameba-rtos.matter
 
 -include $(DEPS)

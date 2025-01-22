@@ -44,7 +44,8 @@ CSRC += $(BTDIR)/matter_blemgr_common.c \
 CSRC += $(FSKVDIR)/kv_matter.c
 
 # Matter LwIP
-CSRC += $(LWIPDIR)/api/lwip_netconf_matter.c
+CSRC += $(LWIPDIR)/api/lwip_netconf_matter.c \
+        $(LWIPDIR)/lwip_v2.1.2/port/realtek/hooks/lwip_default_hooks.c
 
 # Matter MBEDTLS
 CSRC += $(MBEDDIR)/net_sockets.c

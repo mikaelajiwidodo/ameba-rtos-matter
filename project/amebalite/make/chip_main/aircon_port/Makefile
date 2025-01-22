@@ -175,5 +175,6 @@ $(STATIC_LIB):$(OBJS)
 #*****************************************************************************#
 clean: CLEAN_OBJS
 	$(call CLEAN_FUNC)
+	rm -f $(MATTER_EXAMPLEDIR)/aircon/aircon-app-ameba-rtos.matter
 
 -include $(DEPS)
