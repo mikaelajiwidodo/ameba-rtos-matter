@@ -60,12 +60,12 @@ aircon_port: prebuild copy_ld_img2 $(AIRCON_PORT_FILE)
 	@make -C $(MATTER_BUILDDIR)/make/chip_main/aircon_port all
 
 bridge_dm: prebuild copy_ld_img2 $(BRIDGE_DM_FILE) copy_gen_files_bridge_dm
-	@make -C $(MATTER_BUILDDIR)/make/chip/bridge_app all
+	@make -C $(MATTER_BUILDDIR)/make/chip/bridge_dm_app all
 	@make -C $(MATTER_BUILDDIR)/make/chip_main/bridge_dm_app all
 
 bridge_port: prebuild copy_ld_img2 $(BRIDGE_PORT_FILE)
-	@make -C $(MATTER_BUILDDIR)/make/chip/bridge_dm_app all
-	@make -C $(MATTER_BUILDDIR)/make/chip_main/bridge_dm_app all
+	@make -C $(MATTER_BUILDDIR)/make/chip/bridge_app all
+	@make -C $(MATTER_BUILDDIR)/make/chip_main/bridge_port all
 
 dishwasher_port: prebuild copy_ld_img2 $(DISHWASHER_PORT_FILE)
 	@make -C $(MATTER_BUILDDIR)/make/chip/dishwasher_app all

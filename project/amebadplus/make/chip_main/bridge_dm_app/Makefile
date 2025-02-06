@@ -69,6 +69,7 @@ IFLAGS += -I$(BASEDIR)/component/application/matter/common/port
 IFLAGS += -I$(BASEDIR)/component/application/matter/core
 IFLAGS += -I$(BASEDIR)/component/application/matter/driver
 IFLAGS += -I$(BASEDIR)/component/application/matter/example/bridge_dm
+IFLAGS += -I$(BASEDIR)/component/application/matter/example/bridge_dm/build/chip/gen/include
 
 #IFLAGS = -I$(DIR)./
 IFLAGS += -I$(CHIPDIR)/zzz_generated
@@ -107,8 +108,6 @@ CPPSRC += $(CHIPDIR)/src/app/util/attribute-table.cpp
 CPPSRC += $(CHIPDIR)/src/app/util/binding-table.cpp
 CPPSRC += $(CHIPDIR)/src/app/util/DataModelHandler.cpp
 CPPSRC += $(CHIPDIR)/src/app/util/ember-compatibility-functions.cpp
-# CPPSRC += $(CHIPDIR)/src/app/util/ember-global-attribute-access-interface.cpp
-# CPPSRC += $(CHIPDIR)/src/app/util/ember-io-storage.cpp
 CPPSRC += $(CHIPDIR)/src/app/util/generic-callback-stubs.cpp
 CPPSRC += $(CHIPDIR)/src/app/util/util.cpp
 CPPSRC += $(CHIPDIR)/src/app/util/privilege-storage.cpp
