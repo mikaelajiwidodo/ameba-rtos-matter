@@ -48,6 +48,7 @@ int rt_kv_deinit(void)
 		while ((dir = readdir(directory)) != NULL) {
 			if (dir->d_type == DT_REG) { // If the entry is a regular file then delete it
 				DiagSnPrintf(path, MAX_KEY_LENGTH + 1, "%s:KV/%s", kv_matter_prefix, dir->d_name);
+				vTaskDelay(10);
 				if (remove(path) == 0) {
 					DiagPrintf("rt_kv_deinit: succesfully deleted %s\n", path);
 				}

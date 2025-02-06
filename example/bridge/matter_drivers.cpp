@@ -492,11 +492,7 @@ void matter_driver_bridge_server_thread(void *param)
         }
         
         // Bind the socket to a local address
-#ifdef bind
         if (bind(server_fd, (struct sockaddr *) &server_addr, addrlen) != 0)
-#else
-        if (lwip_bind(server_fd, (struct sockaddr *) &server_addr, addrlen) != 0)
-#endif
         {
             ChipLogProgress(DeviceLayer, "Error: bind\n");
             break;

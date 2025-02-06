@@ -1,3 +1,12 @@
+/******************************************************************************
+  *
+  * This module is a confidential and proprietary property of RealTek and
+  * possession or use of this module requires written permission of RealTek.
+  *
+  * Copyright(c) 2016, Realtek Semiconductor Corporation. All rights reserved.
+  *
+******************************************************************************/
+
 /* Includes ------------------------------------------------------------------*/
 #include "lwip_netconf.h"
 #include "main.h"
@@ -13,27 +22,12 @@
 #include "wifi_fast_connect.h"
 #endif
 
-#ifndef UNUSED
-#define UNUSED(x) ((void)(x))
-#endif
-
-/* Private define ------------------------------------------------------------*/
-#if defined(CONFIG_MATTER) && CONFIG_MATTER
-#if LWIP_VERSION_MAJOR >= 2 && LWIP_VERSION_MINOR >= 1
-#if LWIP_IPV6
-#define MAX_DHCP6_TRIES 5
-#endif
-#endif
-#endif
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-#ifdef CONFIG_AS_INIC_AP
-#include "inic_ipc.h"
-#endif
-
 #if defined(CONFIG_MATTER) && CONFIG_MATTER
 #if LWIP_VERSION_MAJOR >= 2 && LWIP_VERSION_MINOR >= 1
 #if LWIP_IPV6 && (LWIP_IPV6_DHCP6_STATEFUL||LWIP_IPV6_DHCP6_STATELESS)
+
+#define MAX_DHCP6_TRIES 5
+
 extern err_t dhcp6_enable(struct netif *netif);
 
 uint8_t LwIP_DHCP6(uint8_t idx, uint8_t dhcp6_state)

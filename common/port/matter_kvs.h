@@ -5,8 +5,8 @@
  *
  * @note rmtp is ignored, as signals are not implemented.
  */
-#ifndef __RTK_MATTER_DCT_H__
-#define __RTK_MATTER_DCT_H__
+#ifndef __RTK_MATTER_KVS_H__
+#define __RTK_MATTER_KVS_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,4 +47,4 @@ s32 getPref_bin_new(const char *domain, const char *key, u8 * buf, size_t bufSiz
 }
 #endif
 
-#endif /* __RTK_MATTER_DCT_H__ */
+#endif /* __RTK_MATTER_KVS_H__ */
