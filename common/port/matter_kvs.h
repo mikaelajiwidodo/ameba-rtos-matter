@@ -1,10 +1,12 @@
-/**
- * @brief High resolution sleep.
- *
- * http://pubs.opengroup.org/onlinepubs/9699919799/functions/nanosleep.html
- *
- * @note rmtp is ignored, as signals are not implemented.
- */
+/******************************************************************************
+  *
+  * This module is a confidential and proprietary property of RealTek and
+  * possession or use of this module requires written permission of RealTek.
+  *
+  * Copyright(c) 2016, Realtek Semiconductor Corporation. All rights reserved.
+  *
+******************************************************************************/
+
 #ifndef __RTK_MATTER_KVS_H__
 #define __RTK_MATTER_KVS_H__
 

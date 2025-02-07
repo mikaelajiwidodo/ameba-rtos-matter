@@ -1,3 +1,12 @@
+/******************************************************************************
+  *
+  * This module is a confidential and proprietary property of RealTek and
+  * possession or use of this module requires written permission of RealTek.
+  *
+  * Copyright(c) 2016, Realtek Semiconductor Corporation. All rights reserved.
+  *
+******************************************************************************/
+
 /************************** 
 * Matter KVS Related 
 **************************/
@@ -13,13 +22,13 @@ extern "C" {
 #include "kv.h"
 #include "chip_porting.h"
 
-#if CONFIG_ENABLE_DCT_ENCRYPTION
+#if CONFIG_ENABLE_KV_ENCRYPTION
 #include "mbedtls/aes.h"
 #endif
 
 #define MATTER_KVS_MAX_VARIABLE_SIZE 400 // max size of the variable value, 400 bytes variable
 
-#if CONFIG_ENABLE_DCT_ENCRYPTION
+#if CONFIG_ENABLE_KV_ENCRYPTION
 #if defined(MBEDTLS_CIPHER_MODE_CTR)
     mbedtls_aes_context aes;
 
