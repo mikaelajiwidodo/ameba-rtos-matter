@@ -39,6 +39,7 @@ clean: CLEAN_OBJS
 	@make -C dishwasher_port clean
 	@make -C fan_port clean
 	@make -C laundrywasher_port clean
+	@make -C lighting_app clean
 	@make -C lighting_dm_app clean
 	@make -C lighting_port clean
 	@make -C microwaveoven_port clean

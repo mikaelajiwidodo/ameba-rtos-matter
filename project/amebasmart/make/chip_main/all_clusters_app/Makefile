@@ -29,69 +29,85 @@ include $(MAKE_INCLUDE_GEN)
 OUTPUT_DIR = $(CHIPDIR)/examples/all-clusters-app/ameba/build/chip
 CODEGEN_DIR = $(OUTPUT_DIR)/codegen
 
-CHIP_ENABLE_OTA_REQUESTOR              = $(shell grep 'chip_enable_ota_requestor' $(OUTPUT_DIR)/args.gn | cut -d' ' -f3)
-CONFIG_ENABLE_AMEBA_TEST_EVENT_TRIGGER = $(shell grep -oP 'CONFIG_ENABLE_AMEBA_TEST_EVENT_TRIGGER=\K\d+' $(MATTER_BUILDDIR)/Makefile.include.matter.km4.gen)
-
 DIR = $(SRCDIR)
 DIR += $(CHIPDIR)/src/app
 DIR += $(CHIPDIR)/src/app/server
-DIR += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common
-DIR += $(CHIPDIR)/examples/all-clusters-app/ameba/main
-DIR += $(CHIPDIR)/examples/microwave-oven-app/microwave-oven-common
+DIR += $(CHIPDIR)/src/lib/dnssd/minimal_mdns/responders
 DIR += $(CHIPDIR)/examples/platform/ameba/ota
 DIR += $(CHIPDIR)/examples/platform/ameba/route_hook
-DIR += $(CHIPDIR)/examples/platform/ameba/shell
-DIR += $(CHIPDIR)/examples/platform/ameba/test_event_trigger
 DIR += $(CHIPDIR)/examples/providers
-DIR += $(CHIPDIR)/zzz_generated/all-clusters-app/zap-generated
 DIR += $(CHIPDIR)/zzz_generated/app-common/app-common/zap-generated
 DIR += $(CHIPDIR)/zzz_generated/app-common/app-common/zap-generated/attributes
 DIR += $(CODEGEN_DIR)/app
 DIR += $(CODEGEN_DIR)/zap-generated
+DIR += $(CHIPDIR)/examples/platform/ameba/shell
+DIR += $(CHIPDIR)/examples/platform/ameba/test_event_trigger
+DIR += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common
+DIR += $(CHIPDIR)/examples/all-clusters-app/ameba/main
+DIR += $(CHIPDIR)/examples/microwave-oven-app/microwave-oven-common
 DIR += $(BASEDIR)/component/application/matter/api
 
 vpath %.cpp $(DIR) $(shell find $(DIR) -type d)
 vpath %.c $(DIR) $(shell find $(DIR) -type d)
+
+#*****************************************************************************#
+#                              BUILD DEFINITIONS                              #
+#*****************************************************************************#
+
+CHIP_ENABLE_OTA_REQUESTOR = $(shell grep 'chip_enable_ota_requestor' $(OUTPUT_DIR)/args.gn | cut -d' ' -f3)
+
 #*****************************************************************************#
 #                               CFLAGS                                        #
 #*****************************************************************************#
 
 GLOBAL_CFLAGS += -DCHIP_PROJECT=1
+GLOBAL_CFLAGS += -DSTD_PRINTF=1
 GLOBAL_CFLAGS += -DCHIP_ADDRESS_RESOLVE_IMPL_INCLUDE_HEADER=\"lib/address_resolve/AddressResolve_DefaultImpl.h\"
+
+# matter blemgr adapter options
+ifeq ($(CONFIG_BLE_MATTER_ADAPTER),y)
+GLOBAL_CFLAGS += -DCONFIG_MATTER_BLEMGR_ADAPTER=1
+endif
+
+# matter shell options
 GLOBAL_CFLAGS += -DCONFIG_ENABLE_CHIP_SHELL=1
 
 #*****************************************************************************#
 #                               Include FILE LIST                             #
 #*****************************************************************************#
 
-#IFLAGS = -I$(DIR)./
-IFLAGS += -I$(FREERTOSDIR)/include/
-IFLAGS += -I$(CHIPDIR)/zzz_generated/all-clusters-app
-IFLAGS += -I$(CHIPDIR)/zzz_generated/all-clusters-app/zap-generated
+IFLAGS += -I$(CHIPDIR)/examples/platform/ameba
+IFLAGS += -I$(CHIPDIR)/examples/providers
+IFLAGS += -I$(CHIPDIR)/src/
+IFLAGS += -I$(CHIPDIR)/src/app/
+IFLAGS += -I$(CHIPDIR)/src/app/util/
+IFLAGS += -I$(CHIPDIR)/src/app/server/
+IFLAGS += -I$(CHIPDIR)/src/controller/data_model
+IFLAGS += -I$(CHIPDIR)/src/include/
+IFLAGS += -I$(CHIPDIR)/src/lib/
+IFLAGS += -I$(CHIPDIR)/third_party/nlassert/repo/include/
+IFLAGS += -I$(CHIPDIR)/third_party/nlio/repo/include/
+IFLAGS += -I$(CHIPDIR)/third_party/nlunit-test/repo/src
+IFLAGS += -I$(CHIPDIR)/zzz_generated
 IFLAGS += -I$(CHIPDIR)/zzz_generated/app-common
+IFLAGS += -I$(CODEGEN_DIR)
+IFLAGS += -I$(CODEGEN_DIR)/zap-generated
 IFLAGS += -I$(CHIPDIR)/examples/all-clusters-app/all-clusters-common
 IFLAGS += -I$(CHIPDIR)/examples/all-clusters-app/all-clusters-common/include
 IFLAGS += -I$(CHIPDIR)/examples/all-clusters-app/ameba/main/include
 IFLAGS += -I$(CHIPDIR)/examples/all-clusters-app/ameba/build/chip/gen/include
 IFLAGS += -I$(CHIPDIR)/examples/microwave-oven-app/microwave-oven-common/include
-IFLAGS += -I$(CHIPDIR)/examples/platform/ameba
-IFLAGS += -I$(CHIPDIR)/examples/providers
-IFLAGS += -I$(CHIPDIR)/src/include/
-IFLAGS += -I$(CHIPDIR)/src/lib/
-IFLAGS += -I$(CHIPDIR)/src/
-IFLAGS += -I$(CHIPDIR)/third_party/nlassert/repo/include/
-IFLAGS += -I$(CHIPDIR)/src/app/
-IFLAGS += -I$(CHIPDIR)/src/app/util/
-IFLAGS += -I$(CHIPDIR)/src/app/server/
-IFLAGS += -I$(CHIPDIR)/src/controller/data_model
-IFLAGS += -I$(CHIPDIR)/third_party/nlio/repo/include/
-IFLAGS += -I$(CHIPDIR)/third_party/nlunit-test/repo/src
-IFLAGS += -I$(CODEGEN_DIR)
+IFLAGS += -I$(BASEDIR)/component/application/matter/api
 
 
 #*****************************************************************************#
 #                               Source FILE LIST                              #
 #*****************************************************************************#
+
+CSRC += $(CHIPDIR)/examples/platform/ameba/route_hook/ameba_route_hook.c
+CSRC += $(CHIPDIR)/examples/platform/ameba/route_hook/ameba_route_table.c
+
+CPPSRC += $(CHIPDIR)/examples/providers/DeviceInfoProviderImpl.cpp
 
 CPPSRC += $(CHIPDIR)/src/app/server/AclStorage.cpp
 CPPSRC += $(CHIPDIR)/src/app/server/DefaultAclStorage.cpp
@@ -114,6 +130,8 @@ CPPSRC += $(CHIPDIR)/src/app/util/privilege-storage.cpp
 CPPSRC += $(CHIPDIR)/src/app/reporting/Engine.cpp
 CPPSRC += $(CHIPDIR)/src/app/reporting/reporting.cpp
 
+CPPSRC += $(CHIPDIR)/src/lib/dnssd/minimal_mdns/responders/IP.cpp
+
 CPPSRC += $(shell cat $(CODEGEN_DIR)/cluster-file.txt)
 
 CPPSRC += $(CODEGEN_DIR)/app/callback-stub.cpp
@@ -123,51 +141,45 @@ CPPSRC += $(CODEGEN_DIR)/zap-generated/IMClusterCommandHandler.cpp
 CPPSRC += $(CHIPDIR)/zzz_generated/app-common/app-common/zap-generated/attributes/Accessors.cpp
 CPPSRC += $(CHIPDIR)/zzz_generated/app-common/app-common/zap-generated/cluster-objects.cpp
 
-CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/bridged-actions-stub.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/air-quality-instance.cpp
-CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/laundry-dryer-controls-delegate-impl.cpp
+CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/bridged-actions-stub.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/dishwasher-alarm-stub.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/dishwasher-mode.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/fan-stub.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/laundry-washer-mode.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/laundry-washer-controls-delegate-impl.cpp
-CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/resource-monitoring-delegates.cpp
+CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/laundry-dryer-controls-delegate-impl.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/operational-state-delegate-impl.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/rvc-operational-state-delegate-impl.cpp
+CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/resource-monitoring-delegates.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/rvc-modes.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/smco-stub.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/static-supported-modes-manager.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/static-supported-temperature-levels.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/concentration-measurement-instances.cpp
-CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/microwave-oven-mode.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/oven-modes.cpp
+CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/microwave-oven-mode.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/oven-operational-state-delegate.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/tcc-mode.cpp
-
 CPPSRC += $(CHIPDIR)/examples/microwave-oven-app/microwave-oven-common/src/microwave-oven-device.cpp
 
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/ameba/main/chipinterface.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/ameba/main/BindingHandler.cpp
+CPPSRC += $(CHIPDIR)/examples/all-clusters-app/ameba/main/ManualOperationCommand.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/ameba/main/DeviceCallbacks.cpp
+CPPSRC += $(CHIPDIR)/examples/all-clusters-app/ameba/main/SmokeCOAlarmManager.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/ameba/main/CHIPDeviceManager.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/ameba/main/Globals.cpp
 CPPSRC += $(CHIPDIR)/examples/all-clusters-app/ameba/main/LEDWidget.cpp
-CPPSRC += $(CHIPDIR)/examples/all-clusters-app/ameba/main/ManualOperationCommand.cpp
-CPPSRC += $(CHIPDIR)/examples/all-clusters-app/ameba/main/DeviceCallbacks.cpp
 
 ifeq ($(CHIP_ENABLE_OTA_REQUESTOR), true)
 CPPSRC += $(CHIPDIR)/examples/platform/ameba/ota/OTAInitializer.cpp
 endif
 CPPSRC += $(CHIPDIR)/examples/platform/ameba/shell/launch_shell.cpp
-ifeq ($(CONFIG_ENABLE_AMEBA_TEST_EVENT_TRIGGER), 1)
 CPPSRC += $(CHIPDIR)/examples/platform/ameba/test_event_trigger/AmebaTestEventTriggerDelegate.cpp
-endif
-CPPSRC += $(CHIPDIR)/examples/providers/DeviceInfoProviderImpl.cpp
 
 CPPSRC += $(BASEDIR)/component/application/matter/api/matter_api.cpp
 
-CSRC += $(CHIPDIR)/examples/platform/ameba/route_hook/ameba_route_hook.c
-CSRC += $(CHIPDIR)/examples/platform/ameba/route_hook/ameba_route_table.c
 #*****************************************************************************#
 #                               Object FILE LIST                              #
 #*****************************************************************************#
@@ -182,12 +194,9 @@ STATIC_LIB = lib_main.a
 #*****************************************************************************#
 -include $(OBJS:.o=.d)
 
-
 #*****************************************************************************#
 #                        RULES TO GENERATE TARGETS                            #
 #*****************************************************************************#
-
-# Define the Rules to build the core targets
 all: CORE_TARGETS
 
 #*****************************************************************************#

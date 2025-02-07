@@ -26,7 +26,7 @@ include $(MAKE_INCLUDE_GEN)
 #*****************************************************************************#
 #                              VARIABLES                                      #
 #*****************************************************************************#
-OUTPUT_DIR = $(BASEDIR)/component/application/matter/example/refrigerator/build/chip
+OUTPUT_DIR = $(CHIPDIR)/examples/lighting-app/ameba/build/chip
 CODEGEN_DIR = $(OUTPUT_DIR)/codegen
 
 DIR = $(SRCDIR)
@@ -40,10 +40,9 @@ DIR += $(CHIPDIR)/zzz_generated/app-common/app-common/zap-generated
 DIR += $(CHIPDIR)/zzz_generated/app-common/app-common/zap-generated/attributes
 DIR += $(CODEGEN_DIR)/app
 DIR += $(CODEGEN_DIR)/zap-generated
+DIR += $(CHIPDIR)/examples/lighting-app/lighting-common
+DIR += $(CHIPDIR)/examples/lighting-app/ameba/main
 DIR += $(BASEDIR)/component/application/matter/api
-DIR += $(BASEDIR)/component/application/matter/core
-DIR += $(BASEDIR)/component/application/matter/driver
-DIR += $(BASEDIR)/component/application/matter/example/refrigerator
 
 vpath %.cpp $(DIR) $(shell find $(DIR) -type d)
 vpath %.c $(DIR) $(shell find $(DIR) -type d)
@@ -61,7 +60,6 @@ CHIP_ENABLE_OTA_REQUESTOR = $(shell grep 'chip_enable_ota_requestor' $(OUTPUT_DI
 GLOBAL_CFLAGS += -DCHIP_PROJECT=1
 GLOBAL_CFLAGS += -DSTD_PRINTF=1
 GLOBAL_CFLAGS += -DCHIP_ADDRESS_RESOLVE_IMPL_INCLUDE_HEADER=\"lib/address_resolve/AddressResolve_DefaultImpl.h\"
-GLOBAL_CFLAGS += -DCONFIG_EXAMPLE_MATTER_REFRIGERATOR=1
 
 # matter blemgr adapter options
 ifeq ($(CONFIG_BLE_MATTER_ADAPTER),y)
@@ -88,14 +86,10 @@ IFLAGS += -I$(CHIPDIR)/zzz_generated
 IFLAGS += -I$(CHIPDIR)/zzz_generated/app-common
 IFLAGS += -I$(CODEGEN_DIR)
 IFLAGS += -I$(CODEGEN_DIR)/zap-generated
+IFLAGS += -I$(CHIPDIR)/examples/lighting-app/lighting-common
+IFLAGS += -I$(CHIPDIR)/examples/lighting-app/ameba/main/include
+IFLAGS += -I$(CHIPDIR)/examples/lighting-app/ameba/build/chip/gen/include
 IFLAGS += -I$(BASEDIR)/component/application/matter/api
-IFLAGS += -I$(BASEDIR)/component/application/matter/common/bluetooth/bt_matter_adapter
-IFLAGS += -I$(BASEDIR)/component/application/matter/common/mbedtls
-IFLAGS += -I$(BASEDIR)/component/application/matter/common/port
-IFLAGS += -I$(BASEDIR)/component/application/matter/core
-IFLAGS += -I$(BASEDIR)/component/application/matter/driver
-IFLAGS += -I$(BASEDIR)/component/application/matter/example/refrigerator
-IFLAGS += -I$(BASEDIR)/component/application/matter/example/refrigerator/build/chip/gen/include
 
 #*****************************************************************************#
 #                              SOURCE FILE LIST                               #
@@ -137,20 +131,17 @@ CPPSRC += $(CODEGEN_DIR)/zap-generated/IMClusterCommandHandler.cpp
 
 CPPSRC += $(CHIPDIR)/zzz_generated/app-common/app-common/zap-generated/attributes/Accessors.cpp
 
-CPPSRC += $(BASEDIR)/component/application/matter/api/matter_api.cpp
+CPPSRC += $(CHIPDIR)/examples/lighting-app/ameba/main/chipinterface.cpp
+CPPSRC += $(CHIPDIR)/examples/lighting-app/ameba/main/DeviceCallbacks.cpp
+CPPSRC += $(CHIPDIR)/examples/lighting-app/ameba/main/CHIPDeviceManager.cpp
+CPPSRC += $(CHIPDIR)/examples/lighting-app/ameba/main/Globals.cpp
+CPPSRC += $(CHIPDIR)/examples/lighting-app/ameba/main/LEDWidget.cpp
 
-# porting layer src files
-CPPSRC += $(BASEDIR)/component/application/matter/core/matter_core.cpp
-CPPSRC += $(BASEDIR)/component/application/matter/core/matter_interaction.cpp
 ifeq ($(CHIP_ENABLE_OTA_REQUESTOR), true)
-CPPSRC += $(BASEDIR)/component/application/matter/core/matter_ota_initializer.cpp
+CPPSRC += $(CHIPDIR)/examples/platform/ameba/ota/OTAInitializer.cpp
 endif
 
-# refrigerator-app src files
-CPPSRC += $(BASEDIR)/component/application/matter/driver/tcc_mode.cpp
-CPPSRC += $(BASEDIR)/component/application/matter/driver/refrigerator_driver.cpp
-CPPSRC += $(BASEDIR)/component/application/matter/example/refrigerator/example_matter_refrigerator.cpp
-CPPSRC += $(BASEDIR)/component/application/matter/example/refrigerator/matter_drivers.cpp
+CPPSRC += $(BASEDIR)/component/application/matter/api/matter_api.cpp
 
 #*****************************************************************************#
 #                              OBJECT FILE LIST                               #
@@ -184,6 +175,5 @@ $(STATIC_LIB):$(OBJS)
 #*****************************************************************************#
 clean: CLEAN_OBJS
 	$(call CLEAN_FUNC)
-	rm -f $(MATTER_EXAMPLEDIR)/refrigerator/refrigerator-app-ameba-rtos.matter
 
 -include $(DEPS)

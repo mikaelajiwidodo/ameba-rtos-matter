@@ -24,44 +24,70 @@ include $(MAKE_INCLUDE_GEN)
 .PHONY: all clean
 
 #*****************************************************************************#
-#                               VARIABLES	                              #
+#                              VARIABLES                                      #
 #*****************************************************************************#
 OUTPUT_DIR = $(BASEDIR)/component/application/matter/example/bridge_dm/build/chip
 CODEGEN_DIR = $(OUTPUT_DIR)/codegen
-
-CHIP_ENABLE_OTA_REQUESTOR = $(shell grep 'chip_enable_ota_requestor' $(OUTPUT_DIR)/args.gn | cut -d' ' -f3)
 
 DIR = $(SRCDIR)
 DIR += $(CHIPDIR)/src/app
 DIR += $(CHIPDIR)/src/app/server
 DIR += $(CHIPDIR)/src/lib/dnssd/minimal_mdns/responders
-DIR += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/
 DIR += $(CHIPDIR)/examples/platform/ameba/ota
 DIR += $(CHIPDIR)/examples/platform/ameba/route_hook
 DIR += $(CHIPDIR)/examples/providers
 DIR += $(CHIPDIR)/zzz_generated/app-common/app-common/zap-generated
 DIR += $(CHIPDIR)/zzz_generated/app-common/app-common/zap-generated/attributes
+DIR += $(CODEGEN_DIR)/app
+DIR += $(CODEGEN_DIR)/zap-generated
 DIR += $(BASEDIR)/component/application/matter/api
 DIR += $(BASEDIR)/component/application/matter/core
 DIR += $(BASEDIR)/component/application/matter/driver
 DIR += $(BASEDIR)/component/application/matter/example/bridge_dm
-DIR += $(BASEDIR)/tools/matter/codegen_helpers/gen/app
-DIR += $(CODEGEN_DIR)/app
-DIR += $(CODEGEN_DIR)/zap-generated
 
 vpath %.cpp $(DIR) $(shell find $(DIR) -type d)
 vpath %.c $(DIR) $(shell find $(DIR) -type d)
+
 #*****************************************************************************#
-#                               CFLAGS                                        #
+#                              BUILD DEFINITIONS                              #
+#*****************************************************************************#
+
+CHIP_ENABLE_OTA_REQUESTOR = $(shell grep 'chip_enable_ota_requestor' $(OUTPUT_DIR)/args.gn | cut -d' ' -f3)
+
+#*****************************************************************************#
+#                              CFLAGS                                         #
 #*****************************************************************************#
 
 GLOBAL_CFLAGS += -DCHIP_PROJECT=1
+GLOBAL_CFLAGS += -DSTD_PRINTF=1
 GLOBAL_CFLAGS += -DCHIP_ADDRESS_RESOLVE_IMPL_INCLUDE_HEADER=\"lib/address_resolve/AddressResolve_DefaultImpl.h\"
 GLOBAL_CFLAGS += -DCONFIG_EXAMPLE_MATTER_BRIDGE=1
 
+# matter blemgr adapter options
+ifeq ($(CONFIG_BLE_MATTER_ADAPTER),y)
+GLOBAL_CFLAGS += -DCONFIG_MATTER_BLEMGR_ADAPTER=1
+endif
+
 #*****************************************************************************#
-#                               Include FILE LIST                             #
+#                              INCLUDE FILE LIST                              #
 #*****************************************************************************#
+
+IFLAGS += -I$(CHIPDIR)/examples/platform/ameba
+IFLAGS += -I$(CHIPDIR)/examples/providers
+IFLAGS += -I$(CHIPDIR)/src/
+IFLAGS += -I$(CHIPDIR)/src/app/
+IFLAGS += -I$(CHIPDIR)/src/app/util/
+IFLAGS += -I$(CHIPDIR)/src/app/server/
+IFLAGS += -I$(CHIPDIR)/src/controller/data_model
+IFLAGS += -I$(CHIPDIR)/src/include/
+IFLAGS += -I$(CHIPDIR)/src/lib/
+IFLAGS += -I$(CHIPDIR)/third_party/nlassert/repo/include/
+IFLAGS += -I$(CHIPDIR)/third_party/nlio/repo/include/
+IFLAGS += -I$(CHIPDIR)/third_party/nlunit-test/repo/src
+IFLAGS += -I$(CHIPDIR)/zzz_generated
+IFLAGS += -I$(CHIPDIR)/zzz_generated/app-common
+IFLAGS += -I$(CODEGEN_DIR)
+IFLAGS += -I$(CODEGEN_DIR)/zap-generated
 IFLAGS += -I$(BASEDIR)/component/application/matter/api
 IFLAGS += -I$(BASEDIR)/component/application/matter/common/bluetooth/bt_matter_adapter
 IFLAGS += -I$(BASEDIR)/component/application/matter/common/mbedtls
@@ -71,28 +97,14 @@ IFLAGS += -I$(BASEDIR)/component/application/matter/driver
 IFLAGS += -I$(BASEDIR)/component/application/matter/example/bridge_dm
 IFLAGS += -I$(BASEDIR)/component/application/matter/example/bridge_dm/build/chip/gen/include
 
-#IFLAGS = -I$(DIR)./
-IFLAGS += -I$(CHIPDIR)/zzz_generated
-IFLAGS += -I$(CHIPDIR)/zzz_generated/app-common
-IFLAGS += -I$(CHIPDIR)/examples/bridge-app/ameba/build/chip/gen/include
-IFLAGS += -I$(CHIPDIR)/examples/platform/ameba
-IFLAGS += -I$(CHIPDIR)/examples/providers
-IFLAGS += -I$(CHIPDIR)/src/include/
-IFLAGS += -I$(CHIPDIR)/src/lib/
-IFLAGS += -I$(CHIPDIR)/src/
-IFLAGS += -I$(CHIPDIR)/third_party/nlassert/repo/include/
-IFLAGS += -I$(CHIPDIR)/src/app/
-IFLAGS += -I$(CHIPDIR)/src/app/util/
-IFLAGS += -I$(CHIPDIR)/src/app/server/
-IFLAGS += -I$(CHIPDIR)/src/controller/data_model
-IFLAGS += -I$(CHIPDIR)/third_party/nlio/repo/include/
-IFLAGS += -I$(CHIPDIR)/third_party/nlunit-test/repo/src
-IFLAGS += -I$(CODEGEN_DIR)
-IFLAGS += -I$(CODEGEN_DIR)/zap-generated
+#*****************************************************************************#
+#                              SOURCE FILE LIST                               #
+#*****************************************************************************#
 
-#*****************************************************************************#
-#                               Source FILE LIST                              #
-#*****************************************************************************#
+CSRC += $(CHIPDIR)/examples/platform/ameba/route_hook/ameba_route_hook.c
+CSRC += $(CHIPDIR)/examples/platform/ameba/route_hook/ameba_route_table.c
+
+CPPSRC += $(CHIPDIR)/examples/providers/DeviceInfoProviderImpl.cpp
 
 CPPSRC += $(CHIPDIR)/src/app/server/AclStorage.cpp
 CPPSRC += $(CHIPDIR)/src/app/server/DefaultAclStorage.cpp
@@ -112,27 +124,22 @@ CPPSRC += $(CHIPDIR)/src/app/util/generic-callback-stubs.cpp
 CPPSRC += $(CHIPDIR)/src/app/util/util.cpp
 CPPSRC += $(CHIPDIR)/src/app/util/privilege-storage.cpp
 
+CPPSRC += $(CHIPDIR)/src/app/reporting/Engine.cpp
+CPPSRC += $(CHIPDIR)/src/app/reporting/reporting.cpp
+
+CPPSRC += $(CHIPDIR)/src/lib/dnssd/minimal_mdns/responders/IP.cpp
+
 CPPSRC += $(shell cat $(CODEGEN_DIR)/cluster-file.txt)
 
 CPPSRC += $(CODEGEN_DIR)/app/callback-stub.cpp
 CPPSRC += $(CODEGEN_DIR)/app/cluster-init-callback.cpp
 CPPSRC += $(CODEGEN_DIR)/zap-generated/IMClusterCommandHandler.cpp
 
-CPPSRC += $(CHIPDIR)/src/app/reporting/Engine.cpp
-CPPSRC += $(CHIPDIR)/src/app/reporting/reporting.cpp
-
-CPPSRC += $(CHIPDIR)/src/lib/dnssd/minimal_mdns/responders/IP.cpp
-
 CPPSRC += $(CHIPDIR)/zzz_generated/app-common/app-common/zap-generated/attributes/Accessors.cpp
-CPPSRC += $(CHIPDIR)/examples/all-clusters-app/all-clusters-common/src/bridged-actions-stub.cpp
 
-CPPSRC += $(CHIPDIR)/examples/providers/DeviceInfoProviderImpl.cpp
-
-CSRC += $(CHIPDIR)/examples/platform/ameba/route_hook/ameba_route_hook.c
-CSRC += $(CHIPDIR)/examples/platform/ameba/route_hook/ameba_route_table.c
-
-# Custom bridge-app src files with porting layer
 CPPSRC += $(BASEDIR)/component/application/matter/api/matter_api.cpp
+
+# porting layer src files
 CPPSRC += $(BASEDIR)/component/application/matter/core/matter_core.cpp
 CPPSRC += $(BASEDIR)/component/application/matter/core/matter_interaction.cpp
 ifeq ($(CHIP_ENABLE_OTA_REQUESTOR), true)
@@ -149,7 +156,7 @@ CPPSRC += $(BASEDIR)/component/application/matter/example/bridge_dm/example_matt
 CPPSRC += $(BASEDIR)/component/application/matter/example/bridge_dm/matter_drivers.cpp
 
 #*****************************************************************************#
-#                               Object FILE LIST                              #
+#                              OBJECT FILE LIST                               #
 #*****************************************************************************#
 CPPOBJS = $(notdir $(CPPSRC:.cpp=.o))
 COBJS = $(notdir $(CSRC:.c=.o))
@@ -158,23 +165,19 @@ OBJS += $(COBJS)
 STATIC_LIB = lib_main.a
 
 #*****************************************************************************#
-#                               Include Dependency                            #
+#                              INCLUDE DEPENDENCY                             #
 #*****************************************************************************#
 -include $(OBJS:.o=.d)
 
-
 #*****************************************************************************#
-#                        RULES TO GENERATE TARGETS                            #
+#                              RULES TO GENERATE TARGETS                      #
 #*****************************************************************************#
-
-# Define the Rules to build the core targets
 all: CORE_TARGETS
 
 #*****************************************************************************#
-#              GENERATE OBJECT FILE
+#                              GENERATE OBJECT FILE                           #
 #*****************************************************************************#
-#CORE_TARGETS:	$(CPPOBJS) $(COBJS)
-CORE_TARGETS:	$(OBJS) $(STATIC_LIB)
+CORE_TARGETS: $(OBJS) $(STATIC_LIB)
 $(STATIC_LIB):$(OBJS)
 	$(AR) rvs $@ $^
 	$(MOVE) -f $@ $(ROOTDIR)/lib/application

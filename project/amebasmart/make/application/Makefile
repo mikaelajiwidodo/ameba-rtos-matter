@@ -8,15 +8,15 @@ include $(MAKE_INCLUDE_GEN)
 #*****************************************************************************#
 #                               VARIABLES	                              #
 #*****************************************************************************#
-DIR = $(BASEDIR)/component/application/matter
-ATCMDDIR = $(BASEDIR)/component/application/matter/common/atcmd
-BTDIR = $(BASEDIR)/component/application/matter/common/bluetooth
-FSKVDIR = $(BASEDIR)/component/application/matter/file_system/kv
-LWIPDIR = $(BASEDIR)/component/application/matter/lwip
-MBEDDIR = $(BASEDIR)/component/application/matter/mbedtls
-PORTDIR = $(BASEDIR)/component/application/matter/port
+DIR         = $(BASEDIR)/component/application/matter
+ATCMDDIR    = $(BASEDIR)/component/application/matter/common/atcmd
+BTDIR       = $(BASEDIR)/component/application/matter/common/bluetooth
+FSKVDIR     = $(BASEDIR)/component/application/matter/file_system/kv
+LWIPDIR     = $(BASEDIR)/component/application/matter/lwip
+MBEDDIR     = $(BASEDIR)/component/application/matter/mbedtls
+PORTDIR     = $(BASEDIR)/component/application/matter/port
 PROTOBUFDIR = $(BASEDIR)/component/application/matter/protobuf
-EXAMPLEDIR  = $(BASEDIR)/component/common/application/matter/example
+EXAMPLEDIR  = $(BASEDIR)/component/application/matter/example
 CHIPTESTDIR = $(BASEDIR)/component/application/matter/example/chiptest
 
 vpath %.c $(DIR)/ $(shell find $(DIR)/ -type d)

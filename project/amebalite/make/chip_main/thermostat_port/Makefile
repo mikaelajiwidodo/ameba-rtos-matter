@@ -61,8 +61,14 @@ CHIP_ENABLE_OTA_REQUESTOR = $(shell grep 'chip_enable_ota_requestor' $(OUTPUT_DI
 #*****************************************************************************#
 
 GLOBAL_CFLAGS += -DCHIP_PROJECT=1
+GLOBAL_CFLAGS += -DSTD_PRINTF=1
 GLOBAL_CFLAGS += -DCHIP_ADDRESS_RESOLVE_IMPL_INCLUDE_HEADER=\"lib/address_resolve/AddressResolve_DefaultImpl.h\"
 GLOBAL_CFLAGS += -DCONFIG_EXAMPLE_MATTER_THERMOSTAT=1
+
+# matter blemgr adapter options
+ifeq ($(CONFIG_BLE_MATTER_ADAPTER),y)
+GLOBAL_CFLAGS += -DCONFIG_MATTER_BLEMGR_ADAPTER=1
+endif
 
 #*****************************************************************************#
 #                              INCLUDE FILE LIST                              #
@@ -150,7 +156,7 @@ CPPSRC += $(BASEDIR)/component/application/matter/example/thermostat/example_mat
 CPPSRC += $(BASEDIR)/component/application/matter/example/thermostat/matter_drivers.cpp
 
 #*****************************************************************************#
-#                               Object FILE LIST                              #
+#                              OBJECT FILE LIST                               #
 #*****************************************************************************#
 CPPOBJS = $(notdir $(CPPSRC:.cpp=.o))
 COBJS = $(notdir $(CSRC:.c=.o))
@@ -159,23 +165,19 @@ OBJS += $(COBJS)
 STATIC_LIB = lib_main.a
 
 #*****************************************************************************#
-#                               Include Dependency                            #
+#                              INCLUDE DEPENDENCY                             #
 #*****************************************************************************#
 -include $(OBJS:.o=.d)
 
-
 #*****************************************************************************#
-#                        RULES TO GENERATE TARGETS                            #
+#                              RULES TO GENERATE TARGETS                      #
 #*****************************************************************************#
-
-# Define the Rules to build the core targets
 all: CORE_TARGETS
 
 #*****************************************************************************#
-#              GENERATE OBJECT FILE
+#                              GENERATE OBJECT FILE                           #
 #*****************************************************************************#
-#CORE_TARGETS:	$(CPPOBJS) $(COBJS)
-CORE_TARGETS:	$(OBJS) $(STATIC_LIB)
+CORE_TARGETS: $(OBJS) $(STATIC_LIB)
 $(STATIC_LIB):$(OBJS)
 	$(AR) rvs $@ $^
 	$(MOVE) -f $@ $(ROOTDIR)/lib/application

@@ -79,6 +79,10 @@ laundrywasher_port: prebuild copy_ld_img2 $(LAUNDRYWASHER_PORT_FILE)
 	@make -C $(MATTER_BUILDDIR)/make/chip/laundrywasher_app all
 	@make -C $(MATTER_BUILDDIR)/make/chip_main/laundrywasher_port all
 
+light: prebuild copy_ld_img2 $(LIGHTING_FILE)
+	make -C $(MATTER_BUILDDIR)/make/chip/lighting_app all
+	make -C $(MATTER_BUILDDIR)/make/chip_main/lighting_app all
+
 light_port: prebuild copy_ld_img2 $(LIGHTING_FILE)
 	@make -C $(MATTER_BUILDDIR)/make/chip/lighting_app all
 	@make -C $(MATTER_BUILDDIR)/make/chip_main/lighting_port all
