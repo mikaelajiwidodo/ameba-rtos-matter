@@ -4,6 +4,7 @@
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <platform_stdlib.h>
 #include <FreeRTOS.h>
+#include <task.h>
 #endif
 
 #ifdef __cplusplus
@@ -222,25 +223,24 @@ static rtw_result_t matter_scan_with_ssid_result_handler(rtw_scan_handler_result
 static rtw_result_t matter_scan_result_handler(unsigned int scanned_AP_num, void *user_data)
 {
     static int total_ap_num = 0;
-    int ap_num_on_single_channel = scanned_AP_num;
     rtw_scan_result_t *scanned_AP_info;
     char *scan_buf = NULL;
     int ret = RTW_ERROR;
 
-    if (ap_num_on_single_channel > 0) {
-        scan_buf = (char *)rtos_mem_zmalloc(ap_num_on_single_channel * sizeof(rtw_scan_result_t));
+    if (scanned_AP_num > 0) {
+        scan_buf = (char *)rtos_mem_zmalloc(scanned_AP_num * sizeof(rtw_scan_result_t));
         if (scan_buf == NULL) {
             DiagPrintf("malloc scan buf fail for scan mcc\n");
             ret = RTW_ERROR;
             goto exit;
         }
-        if (wifi_get_scan_records(&ap_num_on_single_channel, scan_buf) < 0) {
+        if (wifi_get_scan_records(&scanned_AP_num, scan_buf) < 0) {
             rtos_mem_free(scan_buf);
             ret = RTW_ERROR;
             goto exit;
         }
         //print each scan result on one channel
-        for (int i = 0; i < ap_num_on_single_channel; i++) {
+        for (int i = 0; i < scanned_AP_num; i++) {
             scanned_AP_info = (rtw_scan_result_t *)(scan_buf + i * sizeof(rtw_scan_result_t));
 
             RTW_API_INFO("%d\t ", ++apNum);
@@ -553,7 +553,7 @@ static int matter_get_ap_security_mode(IN char *ssid, OUT rtw_security_t *securi
         }
     }
     for (int i = 0; i < (sizeof(matter_userdata)/sizeof(matter_userdata[0])); i++){
-        if(strcmp(matter_userdata[i].SSID.val, ssid) == 0){
+        if(strcmp((char*)matter_userdata[i].SSID.val, ssid) == 0){
             *security_mode = matter_userdata[i].security;
             *channel = matter_userdata[i].channel;
             return 1;
@@ -616,10 +616,10 @@ int matter_wifi_connect(
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     err = wifi_connect(ssid, security_type, password, strlen(ssid), strlen(password), key_id, NULL);
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-    strncpy(connect_param.ssid.val, ssid, sizeof(connect_param.ssid.val) - 1);
+    strncpy((char*)connect_param.ssid.val, ssid, sizeof(connect_param.ssid.val) - 1);
     connect_param.ssid.len = ssid_len;
     memset(connect_param.bssid.octet, 0, ETH_ALEN);
-    connect_param.password = password;
+    connect_param.password = (unsigned char*)password;
     connect_param.password_len = password_len;
     connect_param.security_type = security_type;
     connect_param.key_id = key_id;
