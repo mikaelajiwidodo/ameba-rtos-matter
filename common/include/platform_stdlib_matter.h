@@ -91,6 +91,10 @@ extern void *pvPortCalloc(size_t xWantedCnt, size_t xWantedSize);
 	#undef vsnprintf
 #endif
 
+#elif defined(CONFIG_PLATFORM_8735B)
+
+extern size_t strnlen(const char *s, size_t count);
+
 #endif /* CONFIG_PLATFORM_XXXX */
 
 #endif // PLATFORM_STDLIB_MATTER_H
