@@ -1,4 +1,4 @@
-# Matter (previously CHIP) on AmebaDplus
+# Matter (previously CHIP) on AmebaSmart
 
 - [Get Ameba SDK & Matter SDK](#get-ameba-sdk--matter-sdk)
 - [Set Matter Build Environment](#set-matter-build-environment)
@@ -15,10 +15,9 @@ Create and enter new directory
     mkdir dev
     cd dev
 
-To check out this repository:
+If you have already obtained the ameba-rtos SDK from the FAE, you can skip this step, else check out this repository:
 
-    git clone https://github.com/mikaelajiwidodo/ameba-rtos.git
-    git checkout ameba-rtos-v1.0/matter/release/v1.3
+    git clone https://github.com/mikaelajiwidodo/ameba-rtos.git -b ameba-rtos-v1.0/matter/release/v1.3
 
 To check out Matter repository:
 
@@ -53,7 +52,9 @@ Navigate to the `ameba-rtos` directory:
 
     cd ameba-rtos
 
-    git submodule update --init --recursive
+    chmod u+x matter_setup.sh
+
+    ./matter_setup.sh ameba-rtos
 
 ## Build CHIP library by GN and Final Firmware
 
@@ -65,11 +66,14 @@ Navigate to the `amebasmart_gcc_project` directory:
 
     cd ameba-rtos/amebasmart_gcc_project/
 
-To enable Matter, select `MENUCONFIG FOR CA32 CONFIG`, then select `Matter Config`, and enable `Enable Matter`.
-Change mbedtls version to matter. Under `MENUCONFIG FOR CA32 CONFIG`, select `SSL Config`, then set the `MBEDTLS Version` to `MBEDTLS_MATTER`
-If you want to support Matter BLE, under `CONFIG BT`, select `BLE_Matter_Adapter` and save the configuration.
+Menuconfig for matter:
+- To enable Matter, select `MENUCONFIG FOR CA32 CONFIG`, then select `Matter Config`, and enable `Enable Matter`.
+- Change mbedtls version to matter. Under `MENUCONFIG FOR CA32 CONFIG`, select `SSL Config`, then set the `MBEDTLS Version` to `MBEDTLS_MATTER`
+- If you want to support Matter BLE, under `CONFIG BT`, select `BLE_Matter_Adapter` and save the configuration.
 
-    make menuconfig
+```
+make menuconfig
+```
 
 Navigate to the `project_ap` directory:
 

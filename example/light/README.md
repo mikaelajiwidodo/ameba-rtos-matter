@@ -114,7 +114,7 @@ Refer to this [guide](https://github.com/ambiot/ambd_matter/blob/main/tools/Ameb
 <details>
   <summary>Building with AmebaDplus</summary>
 
-### AmebaDplus ((RTL8721Dx))
+### AmebaDplus (RTL8721Dx)
 
 #### GPIO Pin Configuration
 
@@ -147,7 +147,7 @@ Refer to this [guide](https://github.com/Ameba-AIoT/ameba-rtos/blob/master/READM
 <details>
   <summary>Building with AmebaLite</summary>
 
-### AmebaLite ((RTL8720EA / RTL8726EA))
+### AmebaLite (RTL8720EA / RTL8726EA)
 
 #### GPIO Pin Configuration
 
@@ -180,7 +180,7 @@ Refer to this [guide](https://github.com/Ameba-AIoT/ameba-rtos/blob/master/READM
 <details>
   <summary>Building with AmebaSmart</summary>
 
-### AmebaSmart ((RTL8730E))
+### AmebaSmart (RTL8730E)
 
 #### GPIO Pin Configuration
 
