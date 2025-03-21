@@ -22,6 +22,10 @@ extern "C" {
 #endif
 #include <wifi_conf.h>
 
+#if !defined(RTW_API_INFO)
+#define RTW_API_INFO DiagPrintf
+#endif
+
 u32 apNum = 0; // no of total AP scanned
 static u8 matter_wifi_trigger = 0;
 static rtw_scan_result_t matter_userdata[65] = {0};
@@ -87,25 +91,31 @@ int matter_initiate_wifi_and_connect(rtw_network_info_t* connect_param)
         wifi_indication(WIFI_EVENT_STA_DISASSOC, NULL, 0, 0);
         switch (error_flag)
         {
-            case RTW_CONNECT_SUCCESS:
+            case RTW_SUCCESS:
                 error_flag = RTW_NO_ERROR;
-                break;
-            case RTW_CONNECT_UNKNOWN_FAIL:
-                error_flag = RTW_UNKNOWN;
                 break;
             case RTW_CONNECT_SCAN_FAIL:
                 error_flag = RTW_NONE_NETWORK;
-                break;
-            case RTW_CONNECT_AUTH_FAIL:
-            case RTW_CONNECT_ASSOC_FAIL:
-            case RTW_CONNECT_4WAY_HANDSHAKE_FAIL:
-                error_flag = RTW_CONNECT_FAIL;
                 break;
             case RTW_CONNECT_AUTH_PASSWORD_WRONG:
             case RTW_CONNECT_4WAY_PASSWORD_WRONG:
                 error_flag = RTW_WRONG_PASSWORD;
                 break;
+            case RTW_TIMEOUT:
+                error_flag = RTW_4WAY_HANDSHAKE_TIMEOUT;
+                break;
+            case RTW_CONNECT_INVALID_KEY:
+            case RTW_CONNECT_AUTH_FAIL:
+            case RTW_CONNECT_ASSOC_FAIL:
+            case RTW_CONNECT_4WAY_HANDSHAKE_FAIL:
+                error_flag = RTW_CONNECT_FAIL;
+                break;
+            case RTW_ERROR:
+            case RTW_BADARG:
+            case RTW_BUSY:
+            case RTW_NOMEM:
             default:
+                error_flag = RTW_UNKNOWN;
                 break;
         }
     }
@@ -220,7 +230,7 @@ static rtw_result_t matter_scan_with_ssid_result_handler(rtw_scan_handler_result
     return RTW_SUCCESS;
 }
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-static rtw_result_t matter_scan_result_handler(unsigned int scanned_AP_num, void *user_data)
+static int matter_scan_result_handler(unsigned int scanned_AP_num, void *user_data)
 {
     static int total_ap_num = 0;
     rtw_scan_result_t *scanned_AP_info;
@@ -900,9 +910,11 @@ int matter_wifi_get_wifi_channel_number(uint8_t wlan_idx, uint8_t *ch)
         break;
     }
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-    if(wifi_get_channel(wlan_idx, ch) < 0)
+    rtw_wifi_setting_t wifi_setting;
+    ret = wifi_get_setting(wlan_idx, &wifi_setting);
+    if(ret == RTW_SUCCESS)
     {
-        ret = RTW_ERROR;
+        *ch = wifi_setting.channel;
     }
 #endif
 
