@@ -14,8 +14,13 @@
 extern "C" {
 #endif
 
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <platform/platform_stdlib.h>
 #include <platform_opts.h>
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+#include <platform_stdlib.h>
+#include <platform_autoconf.h>
+#endif
 
 /* Core Options */
 #undef LWIP_TCPIP_CORE_LOCKING
@@ -29,7 +34,7 @@ extern "C" {
 #define LWIP_IPV6                       1
 
 #if LWIP_IPV6
-#if defined(CONFIG_PLATFORM_8710C)
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #undef LWIP_IPV6_DHCP6
 #define LWIP_IPV6_DHCP6             1
 #endif /* defined(CONFIG_PLATFORM_8710C) */

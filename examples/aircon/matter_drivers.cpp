@@ -23,6 +23,15 @@ using chip::Protocols::InteractionModel::Status;
 #define PWM_PIN         PB_5
 #define FAN_PIN         PB_4
 #define DHT_DATA_PIN    PA_12
+#elif defined (CONFIG_AMEBASMART)
+#define FAN_PIN         PA_5
+#define DHT_DATA_PIN    PA_10
+#elif defined (CONFIG_AMEBALITE)
+#define FAN_PIN         PA_31
+#define DHT_DATA_PIN    PA_29
+#elif defined (CONFIG_AMEBADPLUS)
+#define FAN_PIN         PB_18
+#define DHT_DATA_PIN    PA_12
 #endif
 
 MatterRoomAirCon aircon;

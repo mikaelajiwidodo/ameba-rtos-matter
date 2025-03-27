@@ -24,6 +24,7 @@
 #if defined(CONFIG_ENABLE_AMEBA_MDNS_FILTER) && (CONFIG_ENABLE_AMEBA_MDNS_FILTER == 1)
 
 #include <atomic>
+#include <app/server/Dnssd.h>
 #include <inet/EndpointQueueFilter.h>
 #include <inet/IPPacketInfo.h>
 #include <inet/UDPEndPointImpl.h>
