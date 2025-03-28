@@ -34,8 +34,16 @@
 
 #if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <platform_autoconf.h>
+#include <stdio.h>
 #define MBEDTLS_VERSION_CONVERT(a,b,c)	(((a) << 16) + ((b) << 8) + (c))
 #define MBEDTLS_PLATFORM_STD_SNPRINTF   snprintf
+#define MBEDTLS_PLATFORM_SNPRINTF_ALT
+#if (MBEDTLS_VERSION_NUMBER > 0x03000000)
+#include <mbedtls/compat-2.x.h>
+#endif
+#ifndef MBEDTLS_VERSION
+#define MBEDTLS_VERSION MBEDTLS_VERSION_NUMBER
+#endif
 #endif
 
 #if (MBEDTLS_VERSION_NUMBER == 0x021C0100)
