@@ -34,11 +34,7 @@ static void example_matter_task_thread(void *pvParameters)
         vTaskDelay(500);
     }
 
-#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     wifi_set_autoreconnect(0); //Disable default autoreconnect
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-    wifi_config_autoreconnect(0);
-#endif
 
 #if defined(CONFIG_ENABLE_AMEBA_DLOG) && (CONFIG_ENABLE_AMEBA_DLOG == 1)
     fault_handler_override(matter_fault_log, matter_bt_log);

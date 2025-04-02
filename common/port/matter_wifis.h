@@ -145,6 +145,12 @@ enum rtw_connect_error_flag_t {
 	RTW_DHCP_FAIL,        /**< dhcp fail*/
 	RTW_UNKNOWN,         /**< unknown*/
 };
+
+/******************************************************
+ *               Wifi connected to AP API
+ ******************************************************/
+#define wifi_is_connected_to_ap matter_wifi_is_connected_to_ap
+
 #endif //defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 
 /******************************************************

@@ -465,7 +465,7 @@ void matter_set_autoreconnect(uint8_t mode)
 #elif defined(CONFIG_PLATFORM_8721D)
         wext_set_autoreconnect(WLAN0_NAME, mode, AUTO_RECONNECT_COUNT, AUTO_RECONNECT_INTERVAL);
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-        wifi_config_autoreconnect(mode);
+        wifi_set_autoreconnect(mode);
 #endif
     }
     return;
@@ -698,7 +698,14 @@ int matter_wifi_set_mode(rtw_mode_t mode)
 
 int matter_wifi_is_connected_to_ap(void)
 {
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return wifi_is_connected_to_ap();
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+    if (wifi_get_network_mode() != 0)
+        return RTW_SUCCESS;
+    else
+        return RTW_ERROR;
+#endif
 }
 
 int matter_wifi_is_open_security(void)
@@ -809,7 +816,7 @@ int matter_wifi_get_rssi(int *prssi)
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
     int ret;
     rtw_phy_statistics_t phy_statistics;
-    ret = wifi_fetch_phy_statistic(&phy_statistics);
+    ret = wifi_get_phy_statistic(&phy_statistics);
     if (ret >= 0)
     {
         *prssi = phy_statistics.rssi;

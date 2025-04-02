@@ -1,0 +1,17 @@
+menu "Matter Config"
+    config MATTER_EN
+        bool "Enable Matter"
+        default n
+    if MATTER_EN && AMEBADPLUS
+        if TRUSTZONE_FOR_KM4
+            config MATTER_SECURE_EN
+                bool "Enable Matter Secure"
+                default n
+        endif
+        if MATTER_SECURE_EN
+            config MATTER_SECURE
+                bool
+                default y
+        endif
+    endif
+endmenu
