@@ -1,9 +1,15 @@
+if(CONFIG_MATTER_EN AND CONFIG_CORE_AS_AP)
+##########################################################################################
+## * MATTER DEFINITIONS
+set(BASEDIR ${c_BASEDIR})
+
+include(matter.cmake)
+
 # matter general cmake
 set(MATTER_INCLUDE        "${MATTER_CMAKEDIR}/matter.cmake")
 set(GENERATE_ARGS_GN      "${MATTER_CMAKEDIR}/utilities/generate_args_gn.cmake")
 set(GENERATE_CLUSTER_FILE "${MATTER_CMAKEDIR}/utilities/generate_cluster_file.cmake")
 
-# include(${MATTER_INCLUDE})
 
 # MATTER ZAP, CLUSTER, AND OUTPUT_DIR LIST
 set(ALL_CLUSTERS_FILE       "${CHIPDIR}/examples/all-clusters-app/ameba/build/chip/codegen/cluster-file.txt")
@@ -33,6 +39,37 @@ message(STATUS "ZAP_FILE     :${ZAP_FILE}")
 message(STATUS "MATTER_FILE  :${MATTER_FILE}")
 message(STATUS "OUTPUT_DIR   :${OUTPUT_DIR}")
 
+##########################################################################################
+## * This part defines public part of the component
+## * Public part will be used as global build configures for all component
+
+set(public_includes)                #public include directories, NOTE: relative path is OK
+set(public_definitions)             #public definitions
+set(public_libraries)               #public libraries(files), NOTE: linked with whole-archive options
+
+set(matter_defintions)
+set(lib_chip_core)
+set(lib_chip_main)
+
+#----------------------------------------#
+# Component public part, user config begin
+
+# You may use if-else condition to set or update predefined variable above
+
+include(public_includes_matter.cmake)
+include(public_definitions_matter.cmake)
+ameba_list_append(lib_chip_core ${c_SDK_LIB_APPLICATION_DIR}/lib_chip_core.a)
+ameba_list_append(lib_chip_main ${c_SDK_LIB_APPLICATION_DIR}/lib_chip_main.a)
+
+# Component public part, user config end
+#----------------------------------------#
+
+#WARNING: Fixed section, DO NOT change!
+ameba_global_include(${public_includes})
+ameba_global_define(${public_definitions})
+ameba_global_library(${lib_chip_main}) #default: whole-archived
+ameba_global_library(p_NO_WHOLE_ARCHIVE ${lib_chip_core})
+
 # Generate cluster file during setup
 if(DEFINED MATTER_EXAMPLE)
 if(NOT EXISTS ${CLUSTER_FILE})
@@ -51,6 +88,24 @@ add_custom_command(
 	COMMAND ${CMAKE_COMMAND} -DCODEGEN_DIR=${CODEGEN_DIR} -DCHIPDIR=${CHIPDIR} -DMATTER_TOOLDIR=${MATTER_TOOLDIR} -DMATTER_FILE=${MATTER_FILE} -DZAP_FILE=${ZAP_FILE} -DCLUSTER_FILE=${CLUSTER_FILE} -P ${GENERATE_CLUSTER_FILE}
 )
 
+##########################################################################################
+## * This part defines private part of the component
+## * Private part is used to build target of current component
+## * NOTE: The build API guarantees the global build configures(mentioned above)
+## *       applied to the target automatically. So if any configure was already added
+## *       to public above, it's unnecessary to add again below.
+
+#NOTE: User defined section, add your private build configures here
+# You may use if-else condition to set these predefined variable
+# They are only for ameba_add_internal_library/ameba_add_external_app_library/ameba_add_external_soc_library
+set(private_sources)                 #private source files, NOTE: relative path is OK
+set(private_includes)                #private include directories, NOTE: relative path is OK
+set(private_definitions)             #private definitions
+set(private_compile_options)         #private compile_options
+
+#------------------------------#
+# Component private part, user config begin
+
 # Add flags, includes, and source files based on the example 
 if(DEFINED MATTER_EXAMPLE AND MATTER_EXAMPLE)
 	message(STATUS "MATTER_EXAMPLE = ${MATTER_EXAMPLE}")
@@ -66,12 +121,17 @@ if(DEFINED MATTER_EXAMPLE AND MATTER_EXAMPLE)
 	endif()
 endif()
 
+# Component private part, user config end
+#------------------------------#
+
 # Generate args.gn during setup
 # TARGET_COMPILE_FLAGS
 set(TARGET_COMPILE_FLAGS)
-foreach(item IN LISTS GLOBAL_C_OPTIONS)
+foreach(item IN LISTS c_GLOBAL_COMMON_COMPILE_C_OPTIONS)
 	set(TARGET_COMPILE_FLAGS "${TARGET_COMPILE_FLAGS}\"${item}\",")
-	# message(STATUS "adding ${item} of GLOBAL_C_OPTIONS")
+endforeach()
+foreach(item IN LISTS c_GLOBAL_MCU_COMPILE_C_OPTIONS)
+	set(TARGET_COMPILE_FLAGS "${TARGET_COMPILE_FLAGS}\"${item}\",")
 endforeach()
 # INCLUDE_FLAGS
 set(TARGET_INCLUDE_FLAGS)
@@ -97,32 +157,46 @@ add_custom_command(
 )
 
 # Compiling Configurations
-ameba_app_library(chip_main)
-target_sources(${CURRENT_LIB_NAME} PRIVATE ${LIB_CHIP_MAIN_SOURCES})
-target_compile_definitions(${CURRENT_LIB_NAME} PRIVATE ${LIB_CHIP_MAIN_FLAGS})
-target_include_directories(${CURRENT_LIB_NAME} PRIVATE ${LIB_CHIP_MAIN_INC_PATH})
+# ameba_app_library(chip_main)
+# target_sources(${CURRENT_LIB_NAME} PRIVATE ${LIB_CHIP_MAIN_SOURCES})
+# target_compile_definitions(${CURRENT_LIB_NAME} PRIVATE ${LIB_CHIP_MAIN_FLAGS})
+# target_include_directories(${CURRENT_LIB_NAME} PRIVATE ${LIB_CHIP_MAIN_INC_PATH})
+
+#WARNING: Select right API based on your component's release/not-release/standalone
+
+###NOTE: For open-source component, always build from source
+ameba_add_external_app_library(chip_main
+    p_SOURCES
+        ${private_sources}
+    p_INCLUDES
+        ${private_includes}
+    p_DEFINITIONS
+        ${private_definitions}
+    p_COMPILE_OPTIONS
+        ${private_compile_options}
+)
 
 add_custom_command(
-	OUTPUT ${PROJECTDIR}/asdk/lib/application/lib_chip_core.a
+	OUTPUT ${c_SDK_LIB_APPLICATION_DIR}/lib_chip_core.a
 
 	DEPENDS ${ARGS_GN}
 
 	COMMAND ${CMAKE_COMMAND} -E make_directory ${CHIPDIR}/config/ameba/components/chip
 	COMMAND ${CMAKE_COMMAND} -E chdir ${CHIPDIR}/config/ameba/components/chip gn gen --check --fail-on-unused-args ${OUTPUT_DIR}
 	COMMAND ${CMAKE_COMMAND} -E chdir ${CHIPDIR}/config/ameba/components/chip ninja -C ${OUTPUT_DIR} :ameba
-	COMMAND ${CMAKE_COMMAND} -E copy ${OUTPUT_DIR}/lib/* ${PROJECTDIR}/asdk/lib/application/
-	COMMAND ${CMAKE_COMMAND} -E rename ${PROJECTDIR}/asdk/lib/application/libCHIP.a ${PROJECTDIR}/asdk/lib/application/lib_chip_core.a
+	COMMAND ${CMAKE_COMMAND} -E copy ${OUTPUT_DIR}/lib/* ${c_SDK_LIB_APPLICATION_DIR}/
+	COMMAND ${CMAKE_COMMAND} -E rename ${c_SDK_LIB_APPLICATION_DIR}/libCHIP.a ${c_SDK_LIB_APPLICATION_DIR}/lib_chip_core.a
 )
 
 # lib_chip_core is based on GENERATE_NINJA
 add_custom_target(
 	lib_chip_core
-	DEPENDS ${PROJECTDIR}/asdk/lib/application/lib_chip_core.a
+	DEPENDS ${c_SDK_LIB_APPLICATION_DIR}/lib_chip_core.a
 )
 
 # before compiling lib_chip_main, make sure lib_chip_core is compiled
 add_dependencies(
-	${CURRENT_LIB_NAME}
+	${c_CURRENT_TARGET_NAME}
 	lib_chip_core
 )
 
@@ -130,8 +204,9 @@ add_dependencies(
 add_custom_target(
 	clean_matter_libs
 	COMMAND ${CMAKE_COMMAND} -E rm -rf ${OUTPUT_DIR}
-	COMMAND ${CMAKE_COMMAND} -E rm -rf ${PROJECTDIR}/asdk/lib/application/lib_chip_core.a
+	COMMAND ${CMAKE_COMMAND} -E rm -rf ${c_SDK_LIB_APPLICATION_DIR}/lib_chip_core.a
 	COMMAND ${CMAKE_COMMAND} -E echo cleaned lib_chip_core
-	COMMAND ${CMAKE_COMMAND} -E rm -rf ${PROJECTDIR}/asdk/lib/application/lib_chip_main.a
+	COMMAND ${CMAKE_COMMAND} -E rm -rf ${c_SDK_LIB_APPLICATION_DIR}/lib_chip_main.a
 	COMMAND ${CMAKE_COMMAND} -E echo cleaned lib_chip_main
 )
+endif() #CONFIG_MATTER_EN AND CONFIG_CORE_AS_AP

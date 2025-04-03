@@ -19,12 +19,12 @@
 extern "C" {
 #endif
 
+#if defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_8710C)
 #include <wifi_conf.h>
 #include <lwip_netconf.h>
-#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-#include "wifi_ind.h"
-#include "wifi_intf_drv_to_upper.h"
-#include "rtw_wifi_constants.h"
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+#include <wifi_api.h>
+#include <lwip_netconf.h>
 #endif
 
 /******************************************************
@@ -60,6 +60,13 @@ extern "C" {
 #if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 
 /******************************************************
+ *         Wifi Interfaces Index
+ ******************************************************/
+
+#define WLAN0_IDX   STA_WLAN_INDEX
+#define WLAN1_IDX   SOFTAP_WLAN_INDEX
+
+/******************************************************
  *         Wifi Modes
  ******************************************************/
 typedef uint8_t rtw_mode_t;
@@ -79,7 +86,7 @@ typedef uint32_t rtw_security_t;
 /******************************************************
  *         Wifi Settings
  ******************************************************/
-typedef struct _rtw_wifi_setting_t rtw_wifi_setting_t;
+typedef struct rtw_wifi_setting rtw_wifi_setting_t;
 
 /******************************************************
  *         Wifi Event Handler
@@ -89,22 +96,17 @@ typedef void (*rtw_event_handler_t)(char *buf, int buf_len, int flags, void *han
 /******************************************************
  *         Wifi Mac Address
  ******************************************************/
-typedef struct _rtw_mac_t rtw_mac_t;
+typedef struct rtw_mac rtw_mac_t;
 
 /******************************************************
  *         Wifi Network Info
  ******************************************************/
-typedef struct _rtw_network_info_t rtw_network_info_t;
+typedef struct rtw_network_info rtw_network_info_t;
 
 /******************************************************
  *         Wifi Scan Parameter
  ******************************************************/
-typedef struct _rtw_scan_param_t rtw_scan_param_t;
-
-/******************************************************
- *         Wifi Physics Statistics
- ******************************************************/
-typedef struct _rtw_phy_statistics_t rtw_phy_statistics_t;
+typedef struct rtw_scan_param rtw_scan_param_t;
 
 /******************************************************
  *         Wifi Network Mode (BGN)
@@ -158,7 +160,7 @@ enum rtw_connect_error_flag_t {
  ******************************************************/
 typedef enum{
     MATTER_WIFI_EVENT_CONNECT                = WIFI_EVENT_STA_ASSOC,
-    MATTER_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE = WIFI_EVENT_WPA_STA_4WAY_RECV,
+    MATTER_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE = WIFI_EVENT_WPA_EAPOL_RECVD,
     MATTER_WIFI_EVENT_DISCONNECT             = WIFI_EVENT_STA_DISASSOC,
     MATTER_WIFI_EVENT_DHCP6_DONE             = WIFI_EVENT_DHCP6_DONE,
 } matter_wifi_event;

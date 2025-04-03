@@ -17,7 +17,7 @@ ameba_list_append(matter_defintions
 	CHIP_SHELL_MAX_TOKENS=11
 
 	# LwIP options
-	FD_SETSIZE=10
+	FD_SETSIZE=20
 	LWIP_IPV6_ROUTE_TABLE_SUPPORT=1
 
 	# Mbedtls options

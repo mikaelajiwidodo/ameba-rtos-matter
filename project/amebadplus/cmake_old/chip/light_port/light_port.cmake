@@ -1,8 +1,7 @@
-get_target_property(GLOBAL_INTERFACE_INCLUDES ${c_MCU_PROJ_CONFIG} INTERFACE_INCLUDE_DIRECTORIES)
+list(
+	APPEND LIB_CHIP_CORE_INC_PATH
 
-list(APPEND LIB_CHIP_CORE_INC_PATH
-
-	${GLOBAL_INTERFACE_INCLUDES} #needed for the args.gn arguments
+	${GLOBAL_IFLAGS} #needed for the args.gn arguments
 
 	${CHIPDIR}/config/ameba
 	${CHIPDIR}/src
@@ -16,9 +15,10 @@ list(APPEND LIB_CHIP_CORE_INC_PATH
 	${CHIPDIR}/third_party/nlunit-test/repo/src
 )
 
-ameba_list_append(private_includes
+list(
+	APPEND LIB_CHIP_MAIN_INC_PATH
 
-	# ${GLOBAL_INTERFACE_INCLUDES} #not needed
+	# ${GLOBAL_IFLAGS} #not needed
 
 	${MATTER_DIR}/api
 	${MATTER_DIR}/core
@@ -45,27 +45,26 @@ ameba_list_append(private_includes
 	${CODEGEN_DIR}
 )
 
-list(APPEND LIB_CHIP_CORE_FLAGS
+list(
+	APPEND LIB_CHIP_CORE_FLAGS
 
-	${c_GLOBAL_COMMON_COMPILE_DEFINES} #needed for the args.gn arguments
-	${c_GLOBAL_MCU_COMPILE_DEFINES}
-	${matter_defintions}
+	${GLOBAL_C_DEFINES} #needed for the args.gn arguments
 
 	CHIP_PROJECT=1
 )
 
-ameba_list_append(private_definitions
+list(
+	APPEND LIB_CHIP_MAIN_FLAGS
 
 	# ${GLOBAL_C_DEFINES} #not needed
-	# ${c_GLOBAL_MCU_COMPILE_DEFINES}
-	# ${matter_defintions}
 
 	CHIP_PROJECT=1
 	CHIP_ADDRESS_RESOLVE_IMPL_INCLUDE_HEADER=\"lib/address_resolve/AddressResolve_DefaultImpl.h\"
 	USE_ZAP_CONFIG
 )
 
-ameba_list_append(private_sources
+list(
+	APPEND LIB_CHIP_MAIN_SOURCES
 
 	${CHIPDIR}/examples/platform/ameba/route_hook/ameba_route_hook.c
 	${CHIPDIR}/examples/platform/ameba/route_hook/ameba_route_table.c
@@ -98,10 +97,11 @@ ameba_list_append(private_sources
 
 file(STRINGS ${CODEGEN_DIR}/cluster-file.txt CLUSTER_LIST)
 foreach(line IN LISTS CLUSTER_LIST)
-	ameba_list_append(private_sources "${line}")
+	list(APPEND LIB_CHIP_MAIN_SOURCES "${line}")
 endforeach()
 
-ameba_list_append(private_sources
+list(
+	APPEND LIB_CHIP_MAIN_SOURCES
 
 	${CODEGEN_DIR}/app/callback-stub.cpp
 	${CODEGEN_DIR}/app/cluster-init-callback.cpp
@@ -116,12 +116,14 @@ ameba_list_append(private_sources
 )
 
 if(CHIP_ENABLE_OTA_REQUESTOR)
-ameba_list_append(private_sources
+list(
+	APPEND LIB_CHIP_MAIN_SOURCES
 	${MATTER_DIR}/core/matter_ota_initializer.cpp
 )
 endif()
 
-ameba_list_append(private_sources
+list(
+	APPEND LIB_CHIP_MAIN_SOURCES
 	# lighting-app source files
 	${MATTER_DIR}/driver/led_driver.cpp
 	${MATTER_EXAMPLEDIR}/light/example_matter_light.cpp

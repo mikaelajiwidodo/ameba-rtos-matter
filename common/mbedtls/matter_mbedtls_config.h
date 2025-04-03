@@ -2279,6 +2279,9 @@
  *
  */
 //#define MBEDTLS_CMAC_C
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+#define MBEDTLS_CMAC_C
+#endif
 
 /**
  * \def MBEDTLS_CTR_DRBG_C
@@ -2338,6 +2341,9 @@
  *            security risk. We recommend considering stronger ciphers instead.
  */
 //#define MBEDTLS_DES_C
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+#define MBEDTLS_DES_C
+#endif
 
 /**
  * \def MBEDTLS_DHM_C

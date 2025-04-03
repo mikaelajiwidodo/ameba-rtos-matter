@@ -1,5 +1,5 @@
 set(MATTER_DIR        "${BASEDIR}/component/application/matter")
-set(MATTER_CMAKEDIR   "${MATTER_DIR}/project/amebadplus/cmake2")
+set(MATTER_CMAKEDIR   "${MATTER_DIR}/project/amebadplus/cmake")
 set(CHIPDIR           "${BASEDIR}/third_party/connectedhomeip")
 set(MATTER_EXAMPLEDIR "${MATTER_DIR}/example")
 set(MATTER_TOOLDIR    "${MATTER_DIR}/tools")
