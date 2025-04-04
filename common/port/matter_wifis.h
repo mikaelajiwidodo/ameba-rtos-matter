@@ -73,13 +73,13 @@ typedef int rtw_network_mode_t;
  *               WiFi Config
  ******************************************************/
 typedef struct rtw_wifi_config {
-    unsigned int		boot_mode;
-    unsigned char 		ssid[32];
-    unsigned char		ssid_len;
-    unsigned char		security_type;
-    unsigned char		password[RTW_MAX_PSK_LEN+1];
-    unsigned char		password_len;
-    unsigned char		channel;
+    unsigned int     boot_mode;
+    unsigned char    ssid[32];
+    unsigned char    ssid_len;
+    unsigned char    security_type;
+    unsigned char    password[RTW_MAX_PSK_LEN+1];
+    unsigned char    password_len;
+    unsigned char    channel;
 } rtw_wifi_config_t;
 
 /******************************************************
@@ -95,13 +95,13 @@ typedef u8 rtw_interface_t;
  ******************************************************/
 
 enum rtw_connect_error_flag_t {
-	RTW_NO_ERROR,        /**< no error */
-	RTW_NONE_NETWORK,   /**< none network */
-	RTW_WRONG_PASSWORD, /**< wrong password */
-	RTW_4WAY_HANDSHAKE_TIMEOUT, /**< 4 way handshake timeout*/
-	RTW_CONNECT_FAIL,  /**< connect fail*/
-	RTW_DHCP_FAIL,        /**< dhcp fail*/
-	RTW_UNKNOWN,         /**< unknown*/
+    RTW_NO_ERROR,        /**< no error */
+    RTW_NONE_NETWORK,   /**< none network */
+    RTW_WRONG_PASSWORD, /**< wrong password */
+    RTW_4WAY_HANDSHAKE_TIMEOUT, /**< 4 way handshake timeout*/
+    RTW_CONNECT_FAIL,  /**< connect fail*/
+    RTW_DHCP_FAIL,        /**< dhcp fail*/
+    RTW_UNKNOWN,         /**< unknown*/
 };
 #endif
 
@@ -109,9 +109,15 @@ enum rtw_connect_error_flag_t {
  *               Matter WiFi Event
  ******************************************************/
 typedef enum{
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
+    MATTER_WIFI_EVENT_CONNECT                = WIFI_EVENT_CONNECT,
+    MATTER_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE = WIFI_EVENT_FOURWAY_HANDSHAKE_DONE,
+    MATTER_WIFI_EVENT_DISCONNECT             = WIFI_EVENT_DISCONNECT,
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
     MATTER_WIFI_EVENT_CONNECT                = WIFI_EVENT_STA_ASSOC,
     MATTER_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE = WIFI_EVENT_WPA_STA_4WAY_RECV,
     MATTER_WIFI_EVENT_DISCONNECT             = WIFI_EVENT_STA_DISASSOC,
+#endif
     MATTER_WIFI_EVENT_DHCP6_DONE             = WIFI_EVENT_DHCP6_DONE,
 } matter_wifi_event;
 

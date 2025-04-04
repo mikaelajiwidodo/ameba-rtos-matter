@@ -96,10 +96,11 @@ void fATmattershell(void *arg)
     else
     {
         DiagPrintf("No arguments provided for matter shell, available commands:\n%s\n%s\n%s\n%s\n",
-            "ATmatter factoryreset     : to factory reset the matter application",
-            "ATmatter queryimage       : query image for matter ota requestor app",
-            "ATmatter applyupdate      : apply update for matter ota requestor app",
-            "ATmatter help             : to show other matter commands");
+                   "ATmatter factoryreset     : to factory reset the matter application",
+                   "ATmatter queryimage       : query image for matter ota requestor app",
+                   "ATmatter applyupdate      : apply update for matter ota requestor app",
+                   "ATmatter help             : to show other matter commands");
+        //Diagnostics logs is not yet implemented
 #if defined(CONFIG_MATTER_SECURE) && (CONFIG_MATTER_SECURE == 1)
         DiagPrintf("ATmatter secureheapstatus : to check secure heap status\n");
 #endif

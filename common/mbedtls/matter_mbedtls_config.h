@@ -33,6 +33,11 @@
 
 #if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <platform_autoconf.h>
+#include <stdio.h>
+#define MBEDTLS_VERSION_CONVERT(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+#ifndef MBEDTLS_VERSION
+#define MBEDTLS_VERSION MBEDTLS_VERSION_NUMBER
+#endif
 #endif
 
 #if defined(CONFIG_MATTER) && CONFIG_MATTER
@@ -46,10 +51,6 @@
 #define SUPPORT_HW_SW_CRYPTO
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <rom_ssl_ram_map.h>
-#define MBEDTLS_VERSION_CONVERT(a,b,c)	(((a) << 16) + ((b) << 8) + (c))
-#ifndef MBEDTLS_VERSION
-#define MBEDTLS_VERSION		MBEDTLS_VERSION_CONVERT(2,28,1)
-#endif
 #endif
 
 /**

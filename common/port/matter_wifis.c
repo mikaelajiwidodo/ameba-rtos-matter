@@ -424,7 +424,7 @@ void matter_wifi_autoreconnect_hdl(rtw_security_t security_type,
 
 void matter_reconn_task_hdl(void *param)
 {
-	(void) param;
+    (void) param;
 #if defined(CONFIG_MATTER_SECURE) && (CONFIG_MATTER_SECURE == 1)
     rtos_create_secure_context(configMINIMAL_SECURE_STACK_SIZE);
 #endif
@@ -448,16 +448,27 @@ void matter_set_autoreconnect(uint8_t mode)
 
     //if wifi-ssid exist in NVS, it has been commissioned before, CHIP will do autoreconnection
     s32 ret = getPref_bin_new(kWiFiSSIDKeyName, kWiFiSSIDKeyName, buf, sizeof(buf), &ssidLen);
-    if (ret == DCT_SUCCESS)
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
+    if (ret != DCT_SUCCESS)
     {
+        if(mode == RTW_AUTORECONNECT_DISABLE)
+        {
+            p_wlan_autoreconnect_hdl = NULL;
+        }
+        else
+        {
+            p_wlan_autoreconnect_hdl = matter_wifi_autoreconnect_hdl;
+        }
 #if defined(CONFIG_PLATFORM_8710C)
         rltk_wlan_set_autoreconnect(WLAN0_NAME, mode, AUTO_RECONNECT_COUNT, AUTO_RECONNECT_INTERVAL);
 #elif defined(CONFIG_PLATFORM_8721D)
         wext_set_autoreconnect(WLAN0_NAME, mode, AUTO_RECONNECT_COUNT, AUTO_RECONNECT_INTERVAL);
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-        wifi_config_autoreconnect(mode);
 #endif
     }
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+    if (ret == DCT_SUCCESS)
+        wifi_config_autoreconnect(mode);
+#endif
     return;
 }
 
@@ -531,7 +542,7 @@ static int matter_get_ap_security_mode(IN char *ssid, OUT rtw_security_t *securi
     volatile int ret = RTW_SUCCESS;
     rtw_scan_param_t scan_param;
     
-	memset(&scan_param, 0, sizeof(scan_param));
+    memset(&scan_param, 0, sizeof(scan_param));
     scan_param.ssid = ssid;
     scan_param.scan_user_callback = matter_scan_result_handler;
     // scan_param.scan_user_data = NULL;
@@ -705,19 +716,11 @@ int matter_wifi_is_open_security(void)
     return 0;
 }
 
-#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 int matter_wifi_is_ready_to_transceive(rtw_interface_t interface)
 {
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return wifi_is_ready_to_transceive(interface);
-}
-
-int matter_wifi_is_up(rtw_interface_t interface)
-{
-    return wifi_is_up(interface);
-}
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-int matter_wifi_is_ready_to_transceive(unsigned char interface)
-{
     switch (interface)
     {
     case RTW_AP_INTERFACE:
@@ -733,10 +736,14 @@ int matter_wifi_is_ready_to_transceive(unsigned char interface)
     default:
         return RTW_ERROR;
     }
+#endif
 }
 
-int matter_wifi_is_up(unsigned char interface)
+int matter_wifi_is_up(rtw_interface_t interface)
 {
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
+    return wifi_is_up(interface);
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
     switch (interface)
     {
     case RTW_STA_INTERFACE:
@@ -744,8 +751,8 @@ int matter_wifi_is_up(unsigned char interface)
     default:
         return wifi_is_running(SOFTAP_WLAN_INDEX);
     }
-}
 #endif
+}
 
 int matter_wifi_get_ap_bssid(unsigned char *bssid)
 {
