@@ -15,10 +15,15 @@ extern "C" {
 #include <lwip/dhcp.h>
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <osdep_service.h>
+#include <wifi_conf.h>
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 #include <wifi_auto_reconnect.h>
+#include <wifi_api.h>
 #endif
-#include <wifi_conf.h>
+
+#if !defined(RTW_API_INFO)
+#define RTW_API_INFO DiagPrintf
+#endif
 
 u32 apNum = 0; // no of total AP scanned
 static u8 matter_wifi_trigger = 0;
@@ -85,25 +90,31 @@ int matter_initiate_wifi_and_connect(rtw_network_info_t* connect_param)
         wifi_indication(WIFI_EVENT_STA_DISASSOC, NULL, 0, 0);
         switch (error_flag)
         {
-            case RTW_CONNECT_SUCCESS:
+            case RTK_SUCCESS:
                 error_flag = RTW_NO_ERROR;
                 break;
-            case RTW_CONNECT_UNKNOWN_FAIL:
-                error_flag = RTW_UNKNOWN;
-                break;
-            case RTW_CONNECT_SCAN_FAIL:
+            case RTK_ERR_WIFI_CONN_SCAN_FAIL:
                 error_flag = RTW_NONE_NETWORK;
                 break;
-            case RTW_CONNECT_AUTH_FAIL:
-            case RTW_CONNECT_ASSOC_FAIL:
-            case RTW_CONNECT_4WAY_HANDSHAKE_FAIL:
-                error_flag = RTW_CONNECT_FAIL;
-                break;
-            case RTW_CONNECT_AUTH_PASSWORD_WRONG:
-            case RTW_CONNECT_4WAY_PASSWORD_WRONG:
+            case RTK_ERR_WIFI_CONN_AUTH_PASSWORD_WRONG:
+            case RTK_ERR_WIFI_CONN_4WAY_PASSWORD_WRONG:
                 error_flag = RTW_WRONG_PASSWORD;
                 break;
+            case RTK_ERR_TIMEOUT:
+                error_flag = RTW_4WAY_HANDSHAKE_TIMEOUT;
+                break;
+            case RTK_ERR_WIFI_CONN_INVALID_KEY:
+            case RTK_ERR_WIFI_CONN_AUTH_FAIL:
+            case RTK_ERR_WIFI_CONN_ASSOC_FAIL:
+            case RTK_ERR_WIFI_CONN_4WAY_HANDSHAKE_FAIL:
+                error_flag = RTW_CONNECT_FAIL;
+                break;
+            case RTK_FAIL:
+            case RTK_ERR_BADARG:
+            case RTK_ERR_BUSY:
+            case RTK_ERR_NOMEM:
             default:
+                error_flag = RTW_UNKNOWN;
                 break;
         }
     }
@@ -219,7 +230,7 @@ static rtw_result_t matter_scan_with_ssid_result_handler(rtw_scan_handler_result
 }
 
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-static rtw_result_t matter_scan_result_handler(unsigned int scanned_AP_num, void *user_data)
+static int matter_scan_result_handler(unsigned int scanned_AP_num, void *user_data)
 {
     static int total_ap_num = 0;
     rtw_scan_result_t *scanned_AP_info;
@@ -466,7 +477,7 @@ void matter_set_autoreconnect(uint8_t mode)
     }
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
     if (ret == DCT_SUCCESS)
-        wifi_config_autoreconnect(mode);
+        wifi_set_autoreconnect(mode);
 #endif
 #endif /* CONFIG_AUTO_RECONNECT */
     return;
@@ -699,7 +710,15 @@ int matter_wifi_set_mode(rtw_mode_t mode)
 
 int matter_wifi_is_connected_to_ap(void)
 {
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     return wifi_is_connected_to_ap();
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+    u8 join_status = RTW_JOINSTATUS_UNKNOWN;
+    if ((wifi_get_join_status(&join_status) == RTK_SUCCESS)  && (join_status == RTW_JOINSTATUS_SUCCESS))
+        return RTW_SUCCESS;
+    else
+        return RTW_ERROR;
+#endif
 }
 
 int matter_wifi_is_open_security(void)
@@ -809,11 +828,11 @@ int matter_wifi_get_rssi(int *prssi)
     return wifi_get_rssi(prssi);
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
     int ret;
-    rtw_phy_statistics_t phy_statistics;
-    ret = wifi_fetch_phy_statistic(&phy_statistics);
+    union _rtw_phy_stats_t phy_statistics;
+    ret = wifi_get_phy_stats(STA_WLAN_INDEX, NULL, &phy_statistics);
     if (ret >= 0)
     {
-        *prssi = phy_statistics.rssi;
+        *prssi = phy_statistics.sta.rssi;
     }
     return ret;
 #endif
@@ -910,9 +929,11 @@ int matter_wifi_get_wifi_channel_number(uint8_t wlan_idx, uint8_t *ch)
         break;
     }
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-    if(wifi_get_channel(wlan_idx, ch) < 0)
+    rtw_wifi_setting_t wifi_setting;
+    ret = wifi_get_setting(wlan_idx, &wifi_setting);
+    if(ret == RTW_SUCCESS)
     {
-        ret = RTW_ERROR;
+        *ch = wifi_setting.channel;
     }
 #endif
 

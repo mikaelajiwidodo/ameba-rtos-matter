@@ -11,8 +11,7 @@
 #include <wifi_constants.h>
 #include <wifi/wifi_conf.h>
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-#include <rtw_wifi_constants.h>
-#include <wifi_intf_drv_to_app_basic.h>
+#include <wifi_api.h>
 #endif
 #if defined(CONFIG_ENABLE_AMEBA_DLOG) && (CONFIG_ENABLE_AMEBA_DLOG)
 #include <matter_fs.h>
@@ -32,17 +31,13 @@ static void example_matter_task_thread(void *pvParameters)
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     while (!(wifi_is_up(RTW_STA_INTERFACE) || wifi_is_up(RTW_AP_INTERFACE)))
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-    while (!(wifi_is_running(WLAN0_IDX) || wifi_is_running(WLAN1_IDX)))
+    while (!(wifi_is_running(STA_WLAN_INDEX) || wifi_is_running(SOFTAP_WLAN_INDEX)))
 #endif
     {
         vTaskDelay(500);
     }
 
-#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     wifi_set_autoreconnect(0); //Disable default autoreconnect
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-    wifi_config_autoreconnect(0);
-#endif
 
 #if defined(CONFIG_ENABLE_AMEBA_DLOG) && (CONFIG_ENABLE_AMEBA_DLOG == 1)
     fault_handler_override(matter_fault_log, matter_bt_log);

@@ -11,12 +11,15 @@
 #if defined(CONFIG_MATTER) && CONFIG_MATTER
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <log_service.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-#include <atcmd_service.h>
-#endif
 #include <main.h>
 #include <sys_api.h>
 #include <wifi_conf.h>
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+#include <atcmd_service.h>
+#include <main.h>
+#include <sys_api.h>
+#include <wifi_api.h>
+#endif
 
 extern u32 deinitPref(void);
 #if defined(CONFIG_ENABLE_OTA_REQUESTOR) && CONFIG_ENABLE_OTA_REQUESTOR && \

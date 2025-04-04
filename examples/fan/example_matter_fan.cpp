@@ -11,8 +11,7 @@
 #include <wifi_constants.h>
 #include <wifi/wifi_conf.h>
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-#include <rtw_wifi_constants.h>
-#include <wifi_intf_drv_to_app_basic.h>
+#include <wifi_api.h>
 #endif
 
 #include <chip_porting.h>

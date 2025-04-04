@@ -19,18 +19,13 @@
 extern "C" {
 #endif
 
+#if defined(CONFIG_PLATFORM_8721D) || defined(CONFIG_PLATFORM_8710C)
 #include <wifi_conf.h>
 #include <lwip_netconf.h>
-#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-#include "rtw_wifi_constants.h"
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+#include <wifi_api.h>
+#include <lwip_netconf.h>
 #endif
-
-/******************************************************
- *               Other Variables
- ******************************************************/
-extern u32 apNum;
-extern uint32_t rtw_join_status;
-extern rtw_mode_t wifi_mode;
 
 /******************************************************
  *               WiFi Security
@@ -63,6 +58,55 @@ extern rtw_mode_t wifi_mode;
 #endif
 
 #if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+
+/******************************************************
+ *         Wifi Interfaces Index
+ ******************************************************/
+
+#define WLAN0_IDX   STA_WLAN_INDEX
+#define WLAN1_IDX   SOFTAP_WLAN_INDEX
+
+/******************************************************
+ *         Wifi Modes
+ ******************************************************/
+typedef uint8_t rtw_mode_t;
+
+#define RTW_MODE_STA_AP RTW_MODE_STA
+
+/******************************************************
+ *         Wifi Scan Result
+ ******************************************************/
+typedef struct rtw_scan_result rtw_scan_result_t;
+
+/******************************************************
+ *         Wifi Security
+ ******************************************************/
+typedef uint32_t rtw_security_t;
+
+/******************************************************
+ *         Wifi Settings
+ ******************************************************/
+typedef struct rtw_wifi_setting rtw_wifi_setting_t;
+
+/******************************************************
+ *         Wifi Event Handler
+ ******************************************************/
+typedef void (*rtw_event_handler_t)(char *buf, int buf_len, int flags, void *handler_user_data);
+
+/******************************************************
+ *         Wifi Mac Address
+ ******************************************************/
+typedef struct rtw_mac rtw_mac_t;
+
+/******************************************************
+ *         Wifi Network Info
+ ******************************************************/
+typedef struct rtw_network_info rtw_network_info_t;
+
+/******************************************************
+ *         Wifi Scan Parameter
+ ******************************************************/
+typedef struct rtw_scan_param rtw_scan_param_t;
 
 /******************************************************
  *         Wifi Network Mode (BGN)
@@ -103,7 +147,20 @@ enum rtw_connect_error_flag_t {
 	RTW_DHCP_FAIL,        /**< dhcp fail*/
 	RTW_UNKNOWN,         /**< unknown*/
 };
-#endif
+
+/******************************************************
+ *               Wifi connected to AP API
+ ******************************************************/
+#define wifi_is_connected_to_ap matter_wifi_is_connected_to_ap
+
+#endif //defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+
+/******************************************************
+ *               Other Variables
+ ******************************************************/
+extern u32 apNum;
+extern uint32_t rtw_join_status;
+extern rtw_mode_t wifi_mode;
 
 /******************************************************
  *               Matter WiFi Event
@@ -115,7 +172,7 @@ typedef enum{
     MATTER_WIFI_EVENT_DISCONNECT             = WIFI_EVENT_DISCONNECT,
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
     MATTER_WIFI_EVENT_CONNECT                = WIFI_EVENT_STA_ASSOC,
-    MATTER_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE = WIFI_EVENT_WPA_STA_4WAY_RECV,
+    MATTER_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE = WIFI_EVENT_WPA_EAPOL_RECVD,
     MATTER_WIFI_EVENT_DISCONNECT             = WIFI_EVENT_STA_DISASSOC,
 #endif
     MATTER_WIFI_EVENT_DHCP6_DONE             = WIFI_EVENT_DHCP6_DONE,

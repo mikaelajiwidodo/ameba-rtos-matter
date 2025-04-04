@@ -14,8 +14,6 @@
 extern "C" {
 #endif
 
-#include <wifi_conf.h>
-
 enum{
   DCT_SUCCESS = 0,			/*!< success */
   DCT_ERROR = -1,				/*!< error */

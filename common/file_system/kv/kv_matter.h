@@ -18,7 +18,6 @@ extern "C" {
   *                                Functions
   *============================================================================*/
 int rt_kv_deinit(void);
-int32_t rt_kv_get_length(const char *key);
 
 #ifdef __cplusplus
 }

@@ -33,7 +33,7 @@ extern "C" {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <wifi_structures.h>
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-#include <wifi_intf_drv_to_app_basic.h>
+#include <wifi_api.h>
 #endif
 
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
@@ -52,6 +52,12 @@ extern "C" {
 /** @brief  Config local address type: 0-pulic address, 1-static random address */
 #undef F_BT_LE_USE_STATIC_RANDOM_ADDR
 #define F_BT_LE_USE_STATIC_RANDOM_ADDR      1
+#endif
+
+#if defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+/** @brief  Redefine Return Codes */
+#define RTW_SUCCESS RTK_SUCCESS
+#define RTW_ERROR   RTK_FAIL
 #endif
 
 #ifdef __cplusplus

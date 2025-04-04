@@ -11,7 +11,7 @@
 #include "lwip_netconf.h"
 #include "main.h"
 #if CONFIG_WLAN
-#include "wifi_ind.h"
+#include "wifi_api.h"
 #endif
 
 #include "platform_stdlib.h"
