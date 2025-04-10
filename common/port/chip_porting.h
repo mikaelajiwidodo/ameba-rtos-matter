@@ -47,6 +47,11 @@ extern "C" {
 #define F_BT_LE_USE_STATIC_RANDOM_ADDR      1
 #endif
 
+#if (CHIP_ENABLE_AMEBA_TERMS_AND_CONDITION == 1)
+#define CHIP_AMEBA_TC_REQUIRED_ACKNOWLEDGEMENTS 1
+#define CHIP_AMEBA_TC_MIN_REQUIRED_VERSION      1
+#endif
+
 #ifdef __cplusplus
 }
 #endif
