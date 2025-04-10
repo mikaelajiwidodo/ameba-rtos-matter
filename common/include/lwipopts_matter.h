@@ -34,7 +34,7 @@ extern "C" {
 #define LWIP_IPV6                       1
 
 #if LWIP_IPV6
-#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+#if defined(CONFIG_PLATFORM_8710C)
 #undef LWIP_IPV6_DHCP6
 #define LWIP_IPV6_DHCP6             1
 #endif /* defined(CONFIG_PLATFORM_8710C) */

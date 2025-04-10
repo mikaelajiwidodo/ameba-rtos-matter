@@ -66,7 +66,7 @@ void fATchipapp2(void *arg)
 #endif
 }
 
-#if defined(CONFIG_PLATFORM_8710C)
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 void fATmattershell(void *arg)
 {
     if (arg != NULL)
@@ -116,37 +116,6 @@ void fATmattershell(u16 argc, u8 *argv[])
     else
     {
         printf("Enter ATMS switch/manual for more options\r\n");
-    }
-}
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-void fATmattershell(void *arg)
-{
-    if (arg != NULL)
-    {
-        if(strcmp(arg, "factoryreset") == 0) {
-            fATchipapp(NULL);
-        } else if(strcmp(arg, "queryimage") == 0) {
-            fATchipapp1(NULL);
-        } else if(strcmp(arg, "applyupdate") == 0) {
-            fATchipapp2(NULL);
-#if defined(CONFIG_MATTER_SECURE) && (CONFIG_MATTER_SECURE == 1)
-        } else if(strcmp(arg, "secureheapstatus") == 0) {
-            vMatterPrintSecureHeapStatus();
-#endif
-        } else {
-            xQueueSend(shell_queue, arg, pdMS_TO_TICKS(10));
-        }
-    }
-    else
-    {
-        DiagPrintf("No arguments provided for matter shell, available commands:\n%s\n%s\n%s\n%s\n",
-            "ATmatter factoryreset     : to factory reset the matter application",
-            "ATmatter queryimage       : query image for matter ota requestor app",
-            "ATmatter applyupdate      : apply update for matter ota requestor app",
-            "ATmatter help             : to show other matter commands");
-#if defined(CONFIG_MATTER_SECURE) && (CONFIG_MATTER_SECURE == 1)
-        DiagPrintf("ATmatter secureheapstatus : to check secure heap status\n");
-#endif
     }
 }
 #endif /* defined(CONFIG_PLATFORM_XXX) */
@@ -236,12 +205,13 @@ void fATnetworklog(void *arg)
 }
 #endif /* CONFIG_ENABLE_AMEBA_DLOG_TEST */
 
-#if defined(CONFIG_PLATFORM_8710C)
+#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 
 static u32 fATmatterhelp(void *arg);
 
 log_item_t at_matter_items[] = {
 #ifndef CONFIG_INIC_NO_FLASH
+#if defined(CONFIG_PLATFORM_8710C)
 #if ATCMD_VER == ATVER_1
     {"ATM$", fATchipapp, {NULL, NULL}},
     {"ATM%", fATchipapp1, {NULL, NULL}},
@@ -255,6 +225,14 @@ log_item_t at_matter_items[] = {
     {"ATMZ", fATnetworklog, {NULL, NULL}},
 #endif /* CONFIG_ENABLE_AMEBA_DLOG_TEST */
 #endif // end of #if ATCMD_VER == ATVER_1
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+    {"M$", fATchipapp, {NULL, NULL}},
+    {"M%", fATchipapp1, {NULL, NULL}},
+    {"M^", fATchipapp2, {NULL, NULL}},
+    {"MH", fATmatterhelp, {NULL, NULL}},
+    {"MS", fATmattershell, {NULL, NULL}},
+    // CONFIG_ENABLE_AMEBA_DLOG_TEST no implementation yet
+#endif // CONFIG_PLATFORM
 #endif
 };
 
@@ -287,7 +265,11 @@ static u32 fATmatterhelp(void *arg)
 void at_matter_init(void)
 {
     shell_queue = xQueueCreate(3, 256); // backlog 3 commands max
+#if defined(CONFIG_PLATFORM_8710C)
     log_service_add_table(at_matter_items, sizeof(at_matter_items)/sizeof(at_matter_items[0]));
+#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+    atcmd_service_add_table(at_matter_items, sizeof(at_matter_items) / sizeof(at_matter_items[0]));
+#endif // CONFIG_PLATFORM
 }
 
 #if SUPPORT_LOG_SERVICE
@@ -324,26 +306,6 @@ static u32 fATmatterhelp(u16 argc, u8 *argv[])
     }
     printf("\r\n");
     return 0;
-}
-
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-
-log_item_t at_matter_items[] = {
-#ifndef CONFIG_INIC_NO_FLASH
-    {"matter", fATmattershell, {NULL, NULL}},
-#if defined(CONFIG_ENABLE_AMEBA_DLOG_TEST) && (CONFIG_ENABLE_AMEBA_DLOG_TEST == 1)
-    {"ATMW", fATcrash, {NULL, NULL}},
-    {"ATMX", fATcrashbdx, {NULL, NULL}},
-    {"ATMY", fATuserlog, {NULL, NULL}},
-    {"ATMZ", fATnetworklog, {NULL, NULL}},
-#endif /* CONFIG_ENABLE_AMEBA_DLOG_TEST */
-#endif
-};
-
-void at_matter_init(void)
-{
-    shell_queue = xQueueCreate(3, 256); // backlog 3 commands max
-    atcmd_service_add_table(at_matter_items, sizeof(at_matter_items)/sizeof(at_matter_items[0]));
 }
 
 #endif

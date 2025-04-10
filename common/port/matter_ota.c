@@ -33,8 +33,6 @@ static flash_t matter_ota_flash;
 #define MATTER_OTA_HEADER_SIZE (32 + MATTER_OTA_SIGNATURE_SIZE)
 update_ota_target_hdr targetHeader;
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-#define OTA_SUCCESS 1
-#define OTA_ERROR -1
 #define MATTER_OTA_HEADER_SIZE 32
 #define MATTER_OTA_FIRMWARE_LENGTH   0x1EC000
 flash_t matter_ota_flash;

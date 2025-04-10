@@ -1,20 +1,17 @@
 #include <FreeRTOS.h>
 #include <task.h>
+#include <basic_types.h>
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <platform/platform_stdlib.h>
 #include <platform_opts.h>
-#elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-#include <platform_stdlib.h>
-#endif
-#include <basic_types.h>
-#include <section_config.h>
-#if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
 #include <wifi_constants.h>
 #include <wifi/wifi_conf.h>
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
+#include <platform_stdlib.h>
 #include <rtw_wifi_constants.h>
 #include <wifi_intf_drv_to_app_basic.h>
 #endif
+
 #include <chip_porting.h>
 #include <matter_core.h>
 #include <matter_drivers.h>
