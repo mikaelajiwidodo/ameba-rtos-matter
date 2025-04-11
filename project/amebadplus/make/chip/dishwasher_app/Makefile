@@ -13,7 +13,11 @@ OUTPUT_DIR = $(BASEDIR)/component/application/matter/examples/dishwasher/build/c
 #                              BUILD DEFINITIONS                              #
 #*****************************************************************************#
 
-CHIP_ENABLE_AMEBA_TC = $(shell grep '\#define CHIP_ENABLE_AMEBA_TERMS_AND_CONDITION ' $(BASEDIR)/amebadplus_gcc_project/project_km4/inc/platform_autoconf.h | tr -s '[:space:]' | cut -d' ' -f3)
+ifeq ($(CONFIG_MATTER_TC_EN),y)
+CHIP_ENABLE_AMEBA_TC = 1
+else
+CHIP_ENABLE_AMEBA_TC = 0
+endif
 CHIP_ENABLE_CHIPOBLE      = $(shell grep 'CHIP_DEVICE_CONFIG_ENABLE_CHIPOBLE' $(MATTER_INCLUDE) | cut -d'=' -f3)
 CHIP_ENABLE_IPV4          = $(shell grep 'INET_CONFIG_ENABLE_IPV4' $(MATTER_INCLUDE) | cut -d'=' -f3)
 CHIP_ENABLE_OTA_REQUESTOR = $(shell grep 'CONFIG_ENABLE_OTA_REQUESTOR' $(MATTER_INCLUDE) | cut -d'=' -f3)

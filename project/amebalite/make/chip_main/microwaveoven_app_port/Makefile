@@ -133,6 +133,11 @@ CPPSRC += $(CHIPDIR)/src/app/util/privilege-storage.cpp
 CPPSRC += $(CHIPDIR)/src/app/reporting/Engine.cpp
 CPPSRC += $(CHIPDIR)/src/app/reporting/reporting.cpp
 
+ifeq ($(CONFIG_MATTER_TC_EN),y)
+CPPSRC += $(CHIPDIR)/src/app/server/DefaultTermsAndConditionsProvider.cpp
+CPPSRC += $(CHIPDIR)/src/app/server/TermsAndConditionsManager.cpp
+endif
+
 CPPSRC += $(CHIPDIR)/src/lib/dnssd/minimal_mdns/responders/IP.cpp
 
 CPPSRC += $(shell cat $(CODEGEN_DIR)/cluster-file.txt)
@@ -191,6 +196,6 @@ $(STATIC_LIB):$(OBJS)
 #*****************************************************************************#
 clean: CLEAN_OBJS
 	$(call CLEAN_FUNC)
-	rm -f $(MATTER_EXAMPLEDIR)/microwaveoven/microwaveoven-app-ameba-rtos.matter
+	rm -f $(MATTER_EXAMPLEDIR)/microwaveoven/microwaveoven-app.matter
 
 -include $(DEPS)

@@ -132,6 +132,11 @@ CPPSRC += $(CHIPDIR)/src/app/util/privilege-storage.cpp
 CPPSRC += $(CHIPDIR)/src/app/reporting/Engine.cpp
 CPPSRC += $(CHIPDIR)/src/app/reporting/reporting.cpp
 
+ifeq ($(CONFIG_MATTER_TC_EN),y)
+CPPSRC += $(CHIPDIR)/src/app/server/DefaultTermsAndConditionsProvider.cpp
+CPPSRC += $(CHIPDIR)/src/app/server/TermsAndConditionsManager.cpp
+endif
+
 CPPSRC += $(CHIPDIR)/src/lib/dnssd/minimal_mdns/responders/IP.cpp
 
 CPPSRC += $(shell cat $(CODEGEN_DIR)/cluster-file.txt)
