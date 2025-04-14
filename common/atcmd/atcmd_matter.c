@@ -36,10 +36,10 @@ QueueHandle_t shell_queue;
 void fATchipapp(void *arg)
 {
     /* To avoid gcc warnings */
-    ( void ) arg;
-    printf("xPortGetTotalHeapSize = %d\n",xPortGetTotalHeapSize());
-    printf("xPortGetFreeHeapSize = %d\n",xPortGetFreeHeapSize());
-    printf("xPortGetMinimumEverFreeHeapSize = %d\n",xPortGetMinimumEverFreeHeapSize());
+    (void) arg;
+    printf("xPortGetTotalHeapSize = %d\n", xPortGetTotalHeapSize());
+    printf("xPortGetFreeHeapSize = %d\n", xPortGetFreeHeapSize());
+    printf("xPortGetMinimumEverFreeHeapSize = %d\n", xPortGetMinimumEverFreeHeapSize());
 
     deinitPref();
     wifi_disconnect();
@@ -69,22 +69,17 @@ void fATchipapp2(void *arg)
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
 void fATmattershell(void *arg)
 {
-    if (arg != NULL)
-    {
+    if (arg != NULL) {
         xQueueSend(shell_queue, arg, pdMS_TO_TICKS(10));
-    }
-    else
-    {
+    } else {
         printf("No arguments provided for matter shell\n");
     }
 }
 #elif defined(CONFIG_PLATFORM_8721D)
 void fATmattershell(u16 argc, u8 *argv[])
 {
-    if (argc > 0)
-    {
-        if ((strcmp((char *)argv[0], "switch") == 0) || (strcmp((char *)argv[0], "manual") == 0))
-        {
+    if (argc > 0) {
+        if ((strcmp((char *)argv[0], "switch") == 0) || (strcmp((char *)argv[0], "manual") == 0)) {
             size_t total_length = 0;
             for (uint16_t i = 0; i < argc; i++) {
                 total_length += strlen((char *)argv[i]) + 1;
@@ -102,19 +97,14 @@ void fATmattershell(u16 argc, u8 *argv[])
                 }
             }
 
-            if (shell_queue != NULL)
-            {
+            if (shell_queue != NULL) {
                 xQueueSend(shell_queue, concatenated, pdMS_TO_TICKS(10));
             }
             free(concatenated);
-        }
-        else
-        {
+        } else {
             printf("Enter ATMS switch/manual for more options\r\n");
         }
-    }
-    else
-    {
+    } else {
         printf("Enter ATMS switch/manual for more options\r\n");
     }
 }
@@ -180,8 +170,7 @@ void fATnetworklog(void *arg)
 
     size_t dataSize = (size_t)atoi((const char *)arg);
     u8 *data = (u8 *)malloc(dataSize * sizeof(u8));
-    if (data == NULL)
-    {
+    if (data == NULL) {
         return;
     }
 
@@ -197,8 +186,7 @@ void fATnetworklog(void *arg)
 
     matter_insert_network_log(data, dataSize);
 
-    if (data)
-    {
+    if (data) {
         free(data);
     }
     return;
@@ -255,8 +243,7 @@ static u32 fATmatterhelp(void *arg)
     int index;
     printf("\r\nMatter AT Commands List\r\n\r\n");
 
-    for (index = 0; index < (sizeof(at_matter_items) / sizeof(at_matter_items[0])); index++)
-    {
+    for (index = 0; index < (sizeof(at_matter_items) / sizeof(at_matter_items[0])); index++) {
         printf("    %s : %s\n", at_matter_items[index].log_cmd, matter_help_str[index]);
     }
     printf("\r\n");
@@ -266,7 +253,7 @@ void at_matter_init(void)
 {
     shell_queue = xQueueCreate(3, 256); // backlog 3 commands max
 #if defined(CONFIG_PLATFORM_8710C)
-    log_service_add_table(at_matter_items, sizeof(at_matter_items)/sizeof(at_matter_items[0]));
+    log_service_add_table(at_matter_items, sizeof(at_matter_items) / sizeof(at_matter_items[0]));
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
     atcmd_service_add_table(at_matter_items, sizeof(at_matter_items) / sizeof(at_matter_items[0]));
 #endif // CONFIG_PLATFORM
@@ -286,10 +273,10 @@ void matter_shell_init(void)
 
 CMD_TABLE_DATA_SECTION
 const COMMAND_TABLE matter_atcmd[] = {
-    {(const u8 *)"ATM$", 0, fATchipapp,      (const u8 *)"ATM$ : factory reset. (Usage: ATM$)"},
-    {(const u8 *)"ATM%", 0, fATchipapp1,     (const u8 *)"ATM% : matter ota query image. (Usage: ATM%)"},
-    {(const u8 *)"ATM^", 0, fATchipapp2,     (const u8 *)"ATM^ : matter ota apply update. (Usage: ATM^)"},
-    {(const u8 *)"ATMH", 1, fATmatterhelp,   (const u8 *)"ATMH : matter help. (Usage: ATMH)"},
+    {(const u8 *)"ATM$", 0, fATchipapp, (const u8 *)"ATM$ : factory reset. (Usage: ATM$)"},
+    {(const u8 *)"ATM%", 0, fATchipapp1, (const u8 *)"ATM% : matter ota query image. (Usage: ATM%)"},
+    {(const u8 *)"ATM^", 0, fATchipapp2, (const u8 *)"ATM^ : matter ota apply update. (Usage: ATM^)"},
+    {(const u8 *)"ATMH", 1, fATmatterhelp, (const u8 *)"ATMH : matter help. (Usage: ATMH)"},
     {(const u8 *)"ATMS", 11, fATmattershell, (const u8 *)"ATMS : matter client console. (Usage: ATMS switch / ATMS manual)"},
 };
 
@@ -297,11 +284,9 @@ static u32 fATmatterhelp(u16 argc, u8 *argv[])
 {
     u32 index;
     printf("\r\nMatter AT Commands List\r\n\r\n");
-    for(index = 0 ; index < (sizeof(matter_atcmd) / sizeof(COMMAND_TABLE)); index++)
-    {
-        if( matter_atcmd[index].msg )
-        {
-            printf("    %s\n",matter_atcmd[index].msg);
+    for (index = 0 ; index < (sizeof(matter_atcmd) / sizeof(COMMAND_TABLE)); index++) {
+        if (matter_atcmd[index].msg) {
+            printf("    %s\n", matter_atcmd[index].msg);
         }
     }
     printf("\r\n");

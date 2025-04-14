@@ -38,26 +38,22 @@ static void example_matter_aircon_task(void *pvParameters)
     initPref();     // init NVS
 
     err = matter_core_start();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_core_start failed!");
     }
 
     err = matter_driver_room_aircon_init();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_driver_fan_init failed!");
     }
 
     err = matter_interaction_start_downlink();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_interaction_start_downlink failed!\n");
     }
 
     err = matter_interaction_start_uplink();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_interaction_start_uplink failed!\n");
     }
 
@@ -66,8 +62,7 @@ static void example_matter_aircon_task(void *pvParameters)
 
 extern "C" void example_matter_aircon(void)
 {
-    if (xTaskCreate(example_matter_aircon_task, ((const char*)"example_matter_aircon_task"), 2048, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS)
-    {
+    if (xTaskCreate(example_matter_aircon_task, ((const char *)"example_matter_aircon_task"), 2048, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS) {
         ChipLogProgress(DeviceLayer, "%s xTaskCreate(example_matter_aircon_task) failed", __FUNCTION__);
     }
 }

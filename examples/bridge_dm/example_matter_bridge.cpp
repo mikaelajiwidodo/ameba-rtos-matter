@@ -37,7 +37,7 @@ using namespace ::chip::Platform;
 using namespace ::chip::app::Clusters;
 
 MatterBridge bridge;
-Node& node = Node::getInstance();
+Node &node = Node::getInstance();
 
 EmberAfDeviceType gBridgedOnOffDeviceTypes[] = {
     { DEVICE_TYPE_LO_ON_OFF_LIGHT, DEVICE_VERSION_DEFAULT },
@@ -61,26 +61,22 @@ static void example_matter_bridge_task(void *pvParameters)
     initPref();     // init NVS
 
     err = matter_driver_bridge_light_init();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_driver_bridge_light_init failed!");
     }
 
     err = matter_core_start();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_core_start failed!");
     }
 
     err = matter_interaction_start_downlink();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_interaction_start_downlink failed!");
     }
 
     err = matter_interaction_start_uplink();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_interaction_start_uplink failed!");
     }
 
@@ -92,8 +88,7 @@ static void example_matter_bridge_task(void *pvParameters)
     Presets::Endpoints::matter_dimmable_light_preset(&bridgedonoffEndpointConfig);
     bridge.addBridgedEndpoint(bridgedonoffEndpointConfig, Span<const EmberAfDeviceType>(gBridgedOnOffDeviceTypes));
 
-    if (xTaskCreate(matter_customer_bridge_code, ((const char*)"matter_customer_bridge_code"), 1024, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS)
-    {
+    if (xTaskCreate(matter_customer_bridge_code, ((const char *)"matter_customer_bridge_code"), 1024, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS) {
         printf("\r%s xTaskCreate(matter_customer_bridge_code) failed", __FUNCTION__);
     }
 
@@ -110,13 +105,13 @@ static void example_matter_bridge_task(void *pvParameters)
 extern "C" void *Psram_reserve_malloc(int size);
 extern "C" void Psram_reserve_free(void *ptr);
 
-void *operator new(size_t size)
+void *operator new (size_t size)
 {
-    void* ptr = Psram_reserve_malloc(size);
+    void *ptr = Psram_reserve_malloc(size);
     return ptr;
 }
 
-void operator delete(void *p)
+void operator delete (void *p)
 {
     Psram_reserve_free(p);
 }
@@ -124,8 +119,7 @@ void operator delete(void *p)
 
 extern "C" void example_matter_bridge(void)
 {
-    if (xTaskCreate(example_matter_bridge_task, ((const char*)"example_matter_bridge_task"), 2048, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS)
-    {
+    if (xTaskCreate(example_matter_bridge_task, ((const char *)"example_matter_bridge_task"), 2048, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS) {
         ChipLogProgress(DeviceLayer, "%s xTaskCreate(example_matter_bridge_task) failed", __FUNCTION__);
     }
 }

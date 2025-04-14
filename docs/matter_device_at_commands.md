@@ -55,3 +55,4 @@ Demostrating with `ATMS=switch`, please make sure to replace the '=' sign with s
 #### Read Attribute
 
 `ATMS=switch <cluster> read <attribute>`
+

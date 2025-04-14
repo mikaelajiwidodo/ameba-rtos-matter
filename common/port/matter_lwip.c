@@ -81,8 +81,7 @@ void matter_lwip_dhcp6(void)
 
     pnetif = &xnetif[0]; //Station will always be netif[0]
 
-    if(!netif_is_up(pnetif))
-    {
+    if (!netif_is_up(pnetif)) {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
         netif_set_up(pnetif);
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
@@ -90,10 +89,8 @@ void matter_lwip_dhcp6(void)
 #endif
     }
 
-    for (;;)
-    {
-        if (ip6_addr_isvalid(netif_ip6_addr_state(pnetif, 0)))
-        {
+    for (;;) {
+        if (ip6_addr_isvalid(netif_ip6_addr_state(pnetif, 0))) {
             wifi_indication(WIFI_EVENT_DHCP6_DONE, NULL, 0, 0);
             return;
         }
@@ -131,8 +128,7 @@ void matter_check_valid_ipv6(void)
 {
     int timeout = 0;
 
-    while (!ip6_addr_isvalid(netif_ip6_addr_state(&xnetif[0], 0)))
-    {
+    while (!ip6_addr_isvalid(netif_ip6_addr_state(&xnetif[0], 0))) {
         timeout++;
         if (timeout > IPV6_WAIT_TIMEOUT) {
             return; // return after 3s

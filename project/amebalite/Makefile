@@ -38,8 +38,6 @@ LAUNDRYWASHER_PORT_FILE = $(MATTER_EXAMPLEDIR)/laundrywasher/build/chip/codegen/
 LAUNDRYWASHER_PORT_ZAP  = $(MATTER_EXAMPLEDIR)/laundrywasher/laundrywasher-app.zap
 MICROWAVEOVEN_PORT_FILE = $(MATTER_EXAMPLEDIR)/microwaveoven/build/chip/codegen/cluster-file.txt
 MICROWAVEOVEN_PORT_ZAP  = $(MATTER_EXAMPLEDIR)/microwaveoven/microwaveoven-app.zap
-OVEN_PORT_FILE          = $(MATTER_EXAMPLEDIR)/oven/build/chip/codegen/cluster-file.txt
-OVEN_PORT_ZAP           = $(MATTER_EXAMPLEDIR)/oven/oven-app.zap
 REFRIGERATOR_PORT_FILE  = $(MATTER_EXAMPLEDIR)/refrigerator/build/chip/codegen/cluster-file.txt
 REFRIGERATOR_PORT_ZAP   = $(MATTER_EXAMPLEDIR)/refrigerator/refrigerator-app.zap
 
@@ -94,10 +92,6 @@ light_dm: prebuild copy_ld_img2 $(LIGHTING_FILE) copy_gen_files_light_dm
 microwaveoven_port: prebuild copy_ld_img2 $(MICROWAVEOVEN_PORT_FILE)
 	@make -C $(MATTER_BUILDDIR)/make/chip/microwaveoven_app all
 	@make -C $(MATTER_BUILDDIR)/make/chip_main/microwaveoven_app_port all
-
-oven_port: prebuild copy_ld_img2 $(OVEN_PORT_FILE)
-	@make -C $(MATTER_BUILDDIR)/make/chip/oven_app all
-	@make -C $(MATTER_BUILDDIR)/make/chip_main/oven_app_port all
 
 refrigerator_port: prebuild copy_ld_img2 $(REFRIGERATOR_PORT_FILE)
 	@make -C $(MATTER_BUILDDIR)/make/chip/refrigerator_app all
@@ -211,16 +205,6 @@ $(MICROWAVEOVEN_PORT_FILE): $(MICROWAVEOVEN_PORT_ZAP)
 	python3 $(CHIPDIR)/scripts/codegen.py --generator cpp-app --output-dir $(MATTER_EXAMPLEDIR)/microwaveoven/build/chip/codegen --expected-outputs $(MATTER_TOOLDIR)/codegen_helpers/expected.outputs $(MATTER_EXAMPLEDIR)/microwaveoven/microwaveoven-app.matter
 	python3 $(CHIPDIR)/src/app/zap_cluster_list.py --zap_file $(MATTER_EXAMPLEDIR)/microwaveoven/microwaveoven-app.zap > $(MATTER_EXAMPLEDIR)/microwaveoven/build/chip/codegen/cluster-file.txt
 	python3 $(MATTER_TOOLDIR)/codegen_helpers/parse_clusters.py --cluster_file $(MATTER_EXAMPLEDIR)/microwaveoven/build/chip/codegen/cluster-file.txt --chip_path $(CHIPDIR)
-
-$(OVEN_PORT_FILE): $(OVEN_PORT_ZAP)
-	@ rm -f $(RAM_OBJS_LIST)
-	$(MAKE) modify_zap_file ZAP_FILE="$^"
-	mkdir -p $(MATTER_EXAMPLEDIR)/oven/build/chip/codegen/zap-generated
-	python3 $(CHIPDIR)/scripts/tools/zap/generate.py --no-prettify-output --templates src/app/zap-templates/matter-idl-server.json --output-dir $(MATTER_EXAMPLEDIR)/oven/build/chip/codegen/zap-generated $^
-	python3 $(CHIPDIR)/scripts/tools/zap/generate.py --no-prettify-output --templates src/app/zap-templates/app-templates.json --output-dir $(MATTER_EXAMPLEDIR)/oven/build/chip/codegen/zap-generated $^
-	python3 $(CHIPDIR)/scripts/codegen.py --generator cpp-app --output-dir $(MATTER_EXAMPLEDIR)/oven/build/chip/codegen --expected-outputs $(MATTER_TOOLDIR)/codegen_helpers/expected.outputs $(MATTER_EXAMPLEDIR)/oven/oven-app.matter
-	python3 $(CHIPDIR)/src/app/zap_cluster_list.py --zap_file $(MATTER_EXAMPLEDIR)/oven/oven-app.zap > $(MATTER_EXAMPLEDIR)/oven/build/chip/codegen/cluster-file.txt
-	python3 $(MATTER_TOOLDIR)/codegen_helpers/parse_clusters.py --cluster_file $(MATTER_EXAMPLEDIR)/oven/build/chip/codegen/cluster-file.txt --chip_path $(CHIPDIR)
 
 $(REFRIGERATOR_PORT_FILE): $(REFRIGERATOR_PORT_ZAP)
 	@ rm -f $(RAM_OBJS_LIST)

@@ -72,12 +72,9 @@ void matter_ota_prepare_partition(void)
     matter_ota_new_firmware_addr = sys_update_ota_prepare_addr();
 #elif defined(CONFIG_PLATFORM_8721D)
     memset(&targetHeader, 0, sizeof(targetHeader));
-    if (ota_get_cur_index() == OTA_INDEX_1)
-    {
+    if (ota_get_cur_index() == OTA_INDEX_1) {
         matter_ota_new_firmware_addr = LS_IMG2_OTA2_ADDR - SPI_FLASH_BASE;
-    }
-    else if (ota_get_cur_index() == OTA_INDEX_2)
-    {
+    } else if (ota_get_cur_index() == OTA_INDEX_2) {
         matter_ota_new_firmware_addr = LS_IMG2_OTA1_ADDR - SPI_FLASH_BASE;
     }
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
@@ -98,14 +95,11 @@ void matter_ota_prepare_partition(void)
     matterCtx.otaTargetHdr->FileImgHdr[OTA_INDEX_1].Offset = 0x1000; //Offset of Manifest in firmware
     matterCtx.otaTargetHdr->FileImgHdr[OTA_INDEX_2].Offset = 0x1000; //Offset of Manifest in firmware
 
-    if (ota_get_cur_index(matterCtx.otactrl->ImgId) == OTA_INDEX_1)
-    {
+    if (ota_get_cur_index(matterCtx.otactrl->ImgId) == OTA_INDEX_1) {
         matterCtx.otactrl->index = OTA_INDEX_1;
         matterCtx.otactrl->targetIdx = OTA_INDEX_2;
         flash_get_layout_info(IMG_APP_OTA2, &matter_ota_new_firmware_addr, NULL);
-    }
-    else
-    {
+    } else {
         matterCtx.otactrl->index = OTA_INDEX_2;
         matterCtx.otactrl->targetIdx = OTA_INDEX_1;
         flash_get_layout_info(IMG_APP_OTA1, &matter_ota_new_firmware_addr, NULL);
@@ -118,8 +112,7 @@ void matter_ota_prepare_partition(void)
 
 int8_t matter_ota_store_header(uint8_t *data, uint32_t size)
 {
-    if (size + matter_ota_header_size > MATTER_OTA_HEADER_SIZE)
-    {
+    if (size + matter_ota_header_size > MATTER_OTA_HEADER_SIZE) {
         return OTA_ERROR;
     }
 
@@ -131,18 +124,16 @@ int8_t matter_ota_store_header(uint8_t *data, uint32_t size)
 
 int8_t matter_ota_flash_burst_write(uint8_t *data, uint32_t size)
 {
-    if (size == 0)
-    {
+    if (size == 0) {
         return OTA_SUCCESS;
     }
 
     bool overflow = false;
     uint32_t sectorBase = matter_ota_flash_sector_base;
     uint32_t writeLength = MATTER_OTA_SECTOR_SIZE;
-    int16_t bufferRemainSize = (int16_t) (MATTER_OTA_SECTOR_SIZE - matter_ota_buffer_size);
+    int16_t bufferRemainSize = (int16_t)(MATTER_OTA_SECTOR_SIZE - matter_ota_buffer_size);
 
-    if (!matter_ota_first_sector_written)
-    {
+    if (!matter_ota_first_sector_written) {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
         sectorBase += matter_ota_header_size; // leave first 32-bytes for header
         writeLength -= matter_ota_header_size;
@@ -154,21 +145,17 @@ int8_t matter_ota_flash_burst_write(uint8_t *data, uint32_t size)
 #endif
     }
 
-    if (bufferRemainSize >= size)
-    {
+    if (bufferRemainSize >= size) {
         memcpy(matter_ota_buffer + matter_ota_buffer_size, data, size);
         matter_ota_buffer_size += size;
-    }
-    else
-    {
+    } else {
         memcpy(matter_ota_buffer + matter_ota_buffer_size, data, bufferRemainSize);
         matter_ota_buffer_size += bufferRemainSize;
         overflow = true;
         size -= bufferRemainSize;
     }
 
-    if (matter_ota_buffer_size == writeLength)
-    {
+    if (matter_ota_buffer_size == writeLength) {
         // buffer is full, time to erase sector and write buffer data to flash
 #if defined(CONFIG_PLATFORM_8710C)
         device_mutex_lock(RT_DEV_LOCK_FLASH);
@@ -182,8 +169,7 @@ int8_t matter_ota_flash_burst_write(uint8_t *data, uint32_t size)
         flash_erase_sector(&matter_ota_flash, matter_ota_flash_sector_base);
         flash_burst_write(&matter_ota_flash, sectorBase, writeLength, matter_ota_buffer);
 #endif
-        if (!matter_ota_first_sector_written)
-        {
+        if (!matter_ota_first_sector_written) {
             matter_ota_first_sector_written = true;
         }
 
@@ -192,8 +178,7 @@ int8_t matter_ota_flash_burst_write(uint8_t *data, uint32_t size)
         matter_ota_buffer_size = 0;
     }
 
-    if (overflow) // write remaining data into the newly cleared buffer
-    {
+    if (overflow) { // write remaining data into the newly cleared buffer
         // TODO: what if it overflows twice?
         memcpy(matter_ota_buffer + matter_ota_buffer_size, data + bufferRemainSize, size);
         matter_ota_buffer_size += size;
@@ -205,8 +190,7 @@ int8_t matter_ota_flash_burst_write(uint8_t *data, uint32_t size)
 int8_t matter_ota_flush_last(void)
 {
 #if defined(CONFIG_PLATFORM_8710C)
-    if (matter_ota_buffer_size > 0)
-    {
+    if (matter_ota_buffer_size > 0) {
         device_mutex_lock(RT_DEV_LOCK_FLASH);
         flash_erase_sector(&matter_ota_flash, matter_ota_flash_sector_base);
         flash_burst_write(&matter_ota_flash, matter_ota_flash_sector_base, matter_ota_buffer_size, matter_ota_buffer);
@@ -225,8 +209,7 @@ int8_t matter_ota_flush_last(void)
     targetHeader.ValidImgCnt = 1;   // 1 image only in ota file
     memcpy(&(targetHeader.Sign), matter_ota_header + (MATTER_OTA_HEADER_SIZE - MATTER_OTA_SIGNATURE_SIZE), MATTER_OTA_SIGNATURE_SIZE);   // Signature
 
-    if (matter_ota_buffer_size > 0)
-    {
+    if (matter_ota_buffer_size > 0) {
         erase_ota_target_flash(matter_ota_flash_sector_base + SPI_FLASH_BASE, MATTER_OTA_SECTOR_SIZE);
         ota_writestream_user(matter_ota_flash_sector_base, matter_ota_buffer_size, matter_ota_buffer);
 
@@ -235,19 +218,16 @@ int8_t matter_ota_flush_last(void)
         matter_ota_buffer_size = 0;
     }
 
-    if (strncmp("OTA", (const char *) &(targetHeader.FileImgHdr->ImgId), 3) != 0)
-    {
+    if (strncmp("OTA", (const char *) & (targetHeader.FileImgHdr->ImgId), 3) != 0) {
         return OTA_ERROR;
     }
 
-    if (verify_ota_checksum(&targetHeader) != 1)
-    {
+    if (verify_ota_checksum(&targetHeader) != 1) {
         return OTA_ERROR;
     }
 
 #elif defined(CONFIG_PLATFORM_AMEBADPLUS) || defined(CONFIG_PLATFORM_AMEBASMART) || defined(CONFIG_PLATFORM_AMEBALITE)
-    if (matter_ota_buffer_size > 0)
-    {
+    if (matter_ota_buffer_size > 0) {
         flash_erase_sector(&matter_ota_flash, matter_ota_flash_sector_base);
         flash_burst_write(&matter_ota_flash, matter_ota_flash_sector_base, matter_ota_buffer_size, matter_ota_buffer);
 
@@ -266,17 +246,13 @@ int8_t matter_ota_update_signature(void)
     return (update_ota_signature(matter_ota_header, matter_ota_new_firmware_addr) == 0);
 #elif defined(CONFIG_PLATFORM_8721D)
     uint32_t targetIndex;
-    if (matter_ota_new_firmware_addr == LS_IMG2_OTA2_ADDR - SPI_FLASH_BASE)
-    {
+    if (matter_ota_new_firmware_addr == LS_IMG2_OTA2_ADDR - SPI_FLASH_BASE) {
         targetIndex = OTA_INDEX_2;
-    }
-    else
-    {
+    } else {
         targetIndex = OTA_INDEX_1;
     }
 
-    if (change_ota_signature(&targetHeader, targetIndex) != 1)
-    {
+    if (change_ota_signature(&targetHeader, targetIndex) != 1) {
         return OTA_ERROR;
     }
 
@@ -307,11 +283,9 @@ static void matter_ota_abort_task(void *pvParameters)
     printf("Cleaning up aborted OTA\n");
     printf("Erasing %d sectors\n", newFWBlkSize);
 
-    if (matter_ota_new_firmware_addr != 0)
-    {
+    if (matter_ota_new_firmware_addr != 0) {
         device_mutex_lock(RT_DEV_LOCK_FLASH);
-        for (size_t i=0; i<newFWBlkSize; i++)
-        {
+        for (size_t i = 0; i < newFWBlkSize; i++) {
             flash_erase_sector(&matter_ota_flash, matter_ota_new_firmware_addr + (i * MATTER_OTA_SECTOR_SIZE));
         }
         device_mutex_unlock(RT_DEV_LOCK_FLASH);
@@ -321,10 +295,8 @@ static void matter_ota_abort_task(void *pvParameters)
     printf("Cleaning up aborted OTA\n");
     printf("Erasing %d sectors\n", newFWBlkSize);
 
-    if (matter_ota_new_firmware_addr != 0)
-    {
-        for (size_t i=0; i<newFWBlkSize; i++)
-        {
+    if (matter_ota_new_firmware_addr != 0) {
+        for (size_t i = 0; i < newFWBlkSize; i++) {
             erase_ota_target_flash(matter_ota_new_firmware_addr + SPI_FLASH_BASE + (i * MATTER_OTA_SECTOR_SIZE), MATTER_OTA_SECTOR_SIZE);
         }
     }
@@ -333,10 +305,8 @@ static void matter_ota_abort_task(void *pvParameters)
     DiagPrintf("Cleaning up aborted OTA\r\n");
     DiagPrintf("Erasing %d sectors\r\n", newFWBlkSize);
 
-    if (matter_ota_new_firmware_addr != 0)
-    {
-        for (size_t i=0; i<newFWBlkSize; i++)
-        {
+    if (matter_ota_new_firmware_addr != 0) {
+        for (size_t i = 0; i < newFWBlkSize; i++) {
             rtos_time_delay_ms(2); // to avoid undefined behaviour when it suddenly resets the ameba during flash erase
             flash_erase_sector(&matter_ota_flash, matter_ota_new_firmware_addr + (i * MATTER_OTA_SECTOR_SIZE));
         }
@@ -348,8 +318,7 @@ static void matter_ota_abort_task(void *pvParameters)
 
 void matter_ota_create_abort_task(void)
 {
-    if (xTaskCreate(matter_ota_abort_task, "matter_ota_abort", 2048, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS)
-    {
+    if (xTaskCreate(matter_ota_abort_task, "matter_ota_abort", 2048, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS) {
         printf("[%s] Failed to create matter_ota_abort_task\n", __FUNCTION__);
     }
 }

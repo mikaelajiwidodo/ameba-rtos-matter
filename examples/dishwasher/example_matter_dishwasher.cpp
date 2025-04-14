@@ -37,32 +37,27 @@ static void example_matter_dishwasher_task(void *pvParameters)
     initPref();     // init NVS
 
     err = matter_core_start();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_core_start failed!");
     }
 
     err = matter_driver_dishwasher_init();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_driver_dishwasher_init failed!");
     }
 
     err = matter_driver_dishwasher_set_startup_value();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_driver_dishwasher_set_startup_value failed!");
     }
 
     err = matter_interaction_start_downlink();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_interaction_start_downlink failed!");
     }
 
     err = matter_interaction_start_uplink();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_interaction_start_uplink failed!");
     }
 
@@ -71,8 +66,7 @@ static void example_matter_dishwasher_task(void *pvParameters)
 
 extern "C" void example_matter_dishwasher(void)
 {
-    if (xTaskCreate(example_matter_dishwasher_task, ((const char*)"example_matter_dishwasher_task"), 2048, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS)
-    {
+    if (xTaskCreate(example_matter_dishwasher_task, ((const char *)"example_matter_dishwasher_task"), 2048, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS) {
         ChipLogProgress(DeviceLayer, "%s xTaskCreate(example_matter_dishwasher_task) failed", __FUNCTION__);
     }
 }

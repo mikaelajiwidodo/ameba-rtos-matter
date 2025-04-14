@@ -37,14 +37,12 @@ static void example_matter_bridge_task(void *pvParameters)
     initPref();     // init NVS
 
     err = matter_driver_bridge_light_init();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_driver_bridge_light_init failed!");
     }
 
     err = matter_core_start();
-    if (err != CHIP_NO_ERROR)
-    {
+    if (err != CHIP_NO_ERROR) {
         ChipLogProgress(DeviceLayer, "matter_core_start failed!");
     }
 
@@ -59,8 +57,7 @@ static void example_matter_bridge_task(void *pvParameters)
 
 extern "C" void example_matter_bridge(void)
 {
-    if (xTaskCreate(example_matter_bridge_task, ((const char*)"example_matter_bridge_task"), 2048, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS)
-    {
+    if (xTaskCreate(example_matter_bridge_task, ((const char *)"example_matter_bridge_task"), 2048, NULL, tskIDLE_PRIORITY + 1, NULL) != pdPASS) {
         ChipLogProgress(DeviceLayer, "%s xTaskCreate(example_matter_bridge_task) failed", __FUNCTION__);
     }
 }

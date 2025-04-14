@@ -66,7 +66,7 @@ typedef struct rtw_wifi_config {
     unsigned char 		ssid[32];
     unsigned char		ssid_len;
     unsigned char		security_type;
-    unsigned char		password[RTW_MAX_PSK_LEN+1];
+    unsigned char		password[RTW_MAX_PSK_LEN + 1];
     unsigned char		password_len;
     unsigned char		channel;
 } rtw_wifi_config_t;
@@ -84,20 +84,20 @@ typedef u8 rtw_interface_t;
  ******************************************************/
 
 enum rtw_connect_error_flag_t {
-	RTW_NO_ERROR,        /**< no error */
-	RTW_NONE_NETWORK,   /**< none network */
-	RTW_WRONG_PASSWORD, /**< wrong password */
-	RTW_4WAY_HANDSHAKE_TIMEOUT, /**< 4 way handshake timeout*/
-	RTW_CONNECT_FAIL,  /**< connect fail*/
-	RTW_DHCP_FAIL,        /**< dhcp fail*/
-	RTW_UNKNOWN,         /**< unknown*/
+    RTW_NO_ERROR,        /**< no error */
+    RTW_NONE_NETWORK,   /**< none network */
+    RTW_WRONG_PASSWORD, /**< wrong password */
+    RTW_4WAY_HANDSHAKE_TIMEOUT, /**< 4 way handshake timeout*/
+    RTW_CONNECT_FAIL,  /**< connect fail*/
+    RTW_DHCP_FAIL,        /**< dhcp fail*/
+    RTW_UNKNOWN,         /**< unknown*/
 };
 #endif
 
 /******************************************************
  *               Matter WiFi Event
  ******************************************************/
-typedef enum{
+typedef enum {
 #if defined(CONFIG_PLATFORM_8710C) || defined(CONFIG_PLATFORM_8721D)
     MATTER_WIFI_EVENT_CONNECT                = WIFI_EVENT_CONNECT,
     MATTER_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE = WIFI_EVENT_FOURWAY_HANDSHAKE_DONE,
