@@ -16,6 +16,7 @@ RUN set -x \
     libgirepository1.0-dev \
     libcairo2-dev \
     libreadline-dev \
+    libssl-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
