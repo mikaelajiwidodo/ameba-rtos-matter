@@ -24,7 +24,7 @@
 
 #include "common.h"
 
-#if !defined(MBEDTLS_USE_ROM_API) || (defined(CONFIG_BUILD_SECURE) && (CONFIG_BUILD_SECURE == 1))
+#if !defined(MBEDTLS_USE_ROM_API) || (defined(CONFIG_BUILD_SECURE) && (CONFIG_BUILD_SECURE == 1)) || (defined(CONFIG_BUILD_SECURE_TFA) && (CONFIG_BUILD_SECURE_TFA == 1))
 #if defined(MBEDTLS_CTR_DRBG_C)
 
 #include "mbedtls/ctr_drbg.h"

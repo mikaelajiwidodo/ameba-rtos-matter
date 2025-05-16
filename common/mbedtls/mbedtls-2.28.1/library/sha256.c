@@ -28,7 +28,7 @@
 #include <hal_crypto.h>
 #endif
 
-#if !defined(MBEDTLS_USE_ROM_API) || (!(!defined(SUPPORT_HW_SSL_HMAC_SHA256) && defined(CONFIG_PLATFORM_8710C) && !defined(CONFIG_BUILD_SECURE)))
+#if !defined(MBEDTLS_USE_ROM_API) || (!(!defined(SUPPORT_HW_SSL_HMAC_SHA256) && defined(CONFIG_PLATFORM_8710C) && !defined(CONFIG_BUILD_SECURE) && !defined(CONFIG_BUILD_SECURE_TFA)))
 
 #if defined(MBEDTLS_SHA256_C)
 
