@@ -50,7 +50,7 @@ static Identify gIdentify1 = {
     chip::EndpointId{ 1 }, matter_driver_on_identify_start, matter_driver_on_identify_stop, Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator, matter_driver_on_trigger_effect,
 };
 
-void matter_driver_button_callback(uint32_t id, gpio_irq_event event)
+void matter_driver_button_callback(uint32_t id, uint32_t event)
 {
     AppEvent downlink_event;
     downlink_event.Type = AppEvent::kEventType_Downlink_OnOff;
