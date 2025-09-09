@@ -21,7 +21,8 @@ void MatterBridge::Init(Node &mNode)
 {
     // start polling task to poll for messages from bridged device
 
-    if (&mNode == NULL) {
+    if ( &mNode == NULL )
+    {
         ChipLogError(DeviceLayer, "Node is null");
         return;
     }
@@ -88,19 +89,24 @@ void MatterBridgeDevice::SetReachable(bool aReachable)
 {
     bool changed = (mReachable != aReachable);
 
-    if (mReachable == aReachable) {
+    if (mReachable == aReachable)
+    {
         return;
     }
 
     mReachable = aReachable;
 
-    if (mReachable) {
+    if (mReachable)
+    {
         ChipLogProgress(DeviceLayer, "Device[%s]: ONLINE", mName);
-    } else {
+    } 
+    else
+    {
         ChipLogProgress(DeviceLayer, "Device[%s]: OFFLINE", mName);
     }
 
-    if (changed) {
+    if (changed)
+    {
         HandleDeviceChange(this, kChanged_Reachable);
     }
 }
@@ -113,7 +119,8 @@ void MatterBridgeDevice::SetName(const char *szDeviceName)
 
     memcpy(mName, szDeviceName, sizeof(mName));
 
-    if (changed) {
+    if (changed)
+    {
         HandleDeviceChange(this, kChanged_Name);
     }
 }
@@ -126,7 +133,8 @@ void MatterBridgeDevice::SetLocation(const char *szLocation)
 
     ChipLogProgress(DeviceLayer, "Device[%s]: Location=\"%s\"", mName, mLocation);
 
-    if (changed) {
+    if (changed)
+    {
         HandleDeviceChange(this, kChanged_Location);
     }
 }
@@ -152,7 +160,8 @@ void MatterBridgedDeviceOnOff::Set(bool state, int call_callback)
 
     ChipLogProgress(DeviceLayer, "Device[%s]: %s", mName, state ? "ON" : "OFF");
 
-    if ((changed) && (mChanged_CB && call_callback)) {
+    if ((changed) && (mChanged_CB && call_callback))
+    {
         mChanged_CB(this, kChanged_OnOff);
     }
 }
@@ -164,7 +173,8 @@ void MatterBridgedDeviceOnOff::SetChangeCallback(DeviceCallback_fn aChanged_CB)
 
 void MatterBridgedDeviceOnOff::HandleDeviceChange(MatterBridgeDevice *device, MatterBridgeDevice::Changed_t changeMask)
 {
-    if (mChanged_CB) {
+    if (mChanged_CB)
+    {
         mChanged_CB(this, (MatterBridgedDeviceOnOff::Changed_t) changeMask);
     }
 }

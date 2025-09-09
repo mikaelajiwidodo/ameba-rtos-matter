@@ -34,7 +34,7 @@
 #include <app/server/Server.h>
 #endif
 #include <energy_evse/ameba_energy_evse_main.h>
-#include <water_heater/ameba_water_heater_main.h>
+#include <device_energy_management/ameba_energy_management_common_main.h>
 
 using namespace chip;
 using namespace chip::app;
@@ -86,17 +86,9 @@ CHIP_ERROR matter_driver_application_init(void)
 
     chip::DeviceLayer::PlatformMgr().LockChipStack();
 #if (CONFIG_EXAMPLE_MATTER_EVSE_DEVICE)
-    err = EvseApplicationInit();
-    if (err != CHIP_NO_ERROR)
-    {
-        ChipLogProgress(AppServer, "EvseApplicationInit failed");
-    }
+    EvseApplicationInit();
 #elif (CONFIG_EXAMPLE_MATTER_WHM_DEVICE)
-    err = FullWhmApplicationInit();
-    if (err != CHIP_NO_ERROR)
-    {
-        ChipLogProgress(AppServer, "FullWhmApplicationInit failed");
-    }
+    WaterHeaterApplicationInit();
 #endif
     chip::DeviceLayer::PlatformMgr().UnlockChipStack();
 

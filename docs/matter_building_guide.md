@@ -24,32 +24,15 @@ Each device type has its standalone example, and here is how you can build the a
 
 ### Matter Application
 
-The following `make` commands correspond to different device types applicable in Realtek's SDK
-
-#### AmebaDplus (RTL8721Dx) Commands:
+The following `cmake` commands correspond to different device types applicable in Realtek's SDK
 
 ```bash
-make -C asdk all_clusters / air_purifier / aircon_port / bridge_dm / bridge_port / dishwasher_port / fan_port
-             laundrywasher_port / light_dm / light_port / microwaveoven_port / refrigerator_port / thermostat_port
+python build.py -D MATTER_EXAMPLE=all_clusters / MATTER_EXAMPLE=air_purifier / MATTER_EXAMPLE=aircon_port
+                   MATTER_EXAMPLE=bridge_dm / MATTER_EXAMPLE=bridge_port / MATTER_EXAMPLE=dishwasher_port
+                   MATTER_EXAMPLE=fan_port / MATTER_EXAMPLE=laundrywasher_port / MATTER_EXAMPLE=light_dm
+                   MATTER_EXAMPLE=light_port / MATTER_EXAMPLE=microwaveoven_port / MATTER_EXAMPLE=refrigerator_port
+                   MATTER_EXAMPLE=thermostat_port
 ```
-
-#### AmebaLite (RTL8720EA / RTL8726EA) Commands:
-
-```bash
-make -C asdk all_clusters / air_purifier / aircon_port / bridge_dm / bridge_port / dishwasher_port / fan_port
-             laundrywasher_port / light_dm / light_port / microwaveoven_port / refrigerator_port / thermostat_port
-```
-
-#### AmebaSmart (RTL8730E) Commands:
-
-```bash
-make -C asdk all_clusters / air_purifier / aircon_port / bridge_dm / bridge_port / dishwasher_port / fan_port
-             laundrywasher_port / light_dm / light_port / microwaveoven_port / refrigerator_port / thermostat_port
-```
-
-### Matter Application Types
-
-There are two different types of Matter applications:
 
 #### Connectedhomeip Repository Applications:
 - Sourced from the connectedhomeip repository.
