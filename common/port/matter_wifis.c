@@ -311,7 +311,7 @@ static int matter_find_ap_from_scan_buf(char *buf, int buflen, char *target_ssid
     return 0;
 }
 
-static int matter_get_ap_security_mode(IN char *ssid, OUT rtw_security_t *security_mode, OUT u8 *channel)
+static int matter_get_ap_security_mode(char *ssid, rtw_security_t *security_mode, u8 *channel)
 {
     volatile int ret = RTW_SUCCESS;
     rtw_scan_param_t scan_param;
@@ -446,7 +446,16 @@ int matter_wifi_set_mode(rtw_mode_t mode)
 
 int matter_wifi_is_connected_to_ap(void)
 {
+#if defined(CONFIG_AMEBARTOS_V1_0) && (CONFIG_AMEBARTOS_V1_0 == 1)
     return wifi_is_connected_to_ap();
+#elif (defined(CONFIG_AMEBARTOS_V1_1) && (CONFIG_AMEBARTOS_V1_1 == 1)) || \
+      (defined(CONFIG_AMEBARTOS_MASTER) && (CONFIG_AMEBARTOS_MASTER == 1))
+    u8 join_status = RTW_JOINSTATUS_UNKNOWN;
+    if ((wifi_get_join_status(&join_status) == RTK_SUCCESS) && (join_status == RTW_JOINSTATUS_SUCCESS))
+        return RTW_SUCCESS;
+    else
+        return RTW_ERROR;
+#endif // (CONFIG_AMEBARTOS_XXX)
 }
 
 int matter_wifi_is_open_security(void)
@@ -527,11 +536,20 @@ int matter_wifi_get_network_mode(rtw_network_mode_t *pmode)
 int matter_wifi_get_rssi(int *prssi)
 {
     int ret;
+#if defined(CONFIG_AMEBARTOS_V1_0) && (CONFIG_AMEBARTOS_V1_0 == 1)
     rtw_phy_statistics_t phy_statistics;
     ret = wifi_fetch_phy_statistic(&phy_statistics);
     if (ret >= 0) {
         *prssi = phy_statistics.rssi;
     }
+#elif (defined(CONFIG_AMEBARTOS_V1_1) && (CONFIG_AMEBARTOS_V1_1 == 1)) || \
+      (defined(CONFIG_AMEBARTOS_MASTER) && (CONFIG_AMEBARTOS_MASTER == 1))
+    union rtw_phy_stats phy_stats;
+    ret = wifi_get_phy_stats(STA_WLAN_INDEX, NULL, &phy_stats);
+    if (ret >= 0) {
+        *prssi = phy_stats.sta.rssi;
+    }
+#endif // (CONFIG_AMEBARTOS_XXX)
     return ret;
 }
 
@@ -561,9 +579,19 @@ int matter_wifi_get_setting(unsigned char wlan_idx, rtw_wifi_setting_t *psetting
 int matter_wifi_get_wifi_channel_number(uint8_t wlan_idx, uint8_t *ch)
 {
     int ret = RTW_SUCCESS;
+#if defined(CONFIG_AMEBARTOS_V1_0) && (CONFIG_AMEBARTOS_V1_0 == 1)
     if (wifi_get_channel(wlan_idx, ch) < 0) {
         ret = RTW_ERROR;
     }
+#elif (defined(CONFIG_AMEBARTOS_V1_1) && (CONFIG_AMEBARTOS_V1_1 == 1)) || \
+      (defined(CONFIG_AMEBARTOS_MASTER) && (CONFIG_AMEBARTOS_MASTER == 1))
+    rtw_wifi_setting_t setting = {0};
+    if (wifi_get_setting(wlan_idx, &setting) < 0) {
+        ret = RTW_ERROR;
+    } else {
+        *ch = setting.channel;
+    }
+#endif // (CONFIG_AMEBARTOS_XXX)
     return ret;
 }
 
@@ -611,6 +639,7 @@ void matter_wifi_reg_event_handler(matter_wifi_event event_cmds, rtw_event_handl
     }
 }
 
+#if defined(CONFIG_AMEBARTOS_V1_0) && (CONFIG_AMEBARTOS_V1_0 == 1)
 static void matter_wifi_join_status_event_hdl(char *buf, int buf_len, int flags, void *userdata)
 {
     UNUSED(buf_len);
@@ -618,6 +647,18 @@ static void matter_wifi_join_status_event_hdl(char *buf, int buf_len, int flags,
 
     enum rtw_join_status_type join_status = (enum rtw_join_status_type)flags;
     struct rtw_event_join_fail_info_t *fail_info = (struct rtw_event_join_fail_info_t *)buf;
+#elif (defined(CONFIG_AMEBARTOS_V1_1) && (CONFIG_AMEBARTOS_V1_1 == 1)) || \
+      (defined(CONFIG_AMEBARTOS_MASTER) && (CONFIG_AMEBARTOS_MASTER == 1))
+static void matter_wifi_join_status_event_hdl(u8 *buf)
+{
+    // u8 join_status = (u8)flags;
+    // struct rtw_event_info_joinstatus_joinfail *fail_info = (struct rtw_event_info_joinstatus_joinfail *)buf;
+	struct rtw_event_join_status_info *evt_info = (struct rtw_event_join_status_info *)buf;
+	u8 join_status = evt_info->status;
+    u8 flags = join_status;
+	struct rtw_event_join_fail *fail_info;
+    fail_info = &evt_info->priv.fail;
+#endif
 
     switch (join_status) {
         case RTW_JOINSTATUS_SUCCESS: // Connecting --> Connected Succesfully
@@ -628,6 +669,7 @@ static void matter_wifi_join_status_event_hdl(char *buf, int buf_len, int flags,
         case RTW_JOINSTATUS_FAIL: // Connecting --> Failed to Connect
             RTK_LOGI(TAG, "Join fail, error_flag = ");
             switch (fail_info->fail_reason) {
+#if defined(CONFIG_AMEBARTOS_V1_0) && (CONFIG_AMEBARTOS_V1_0 == 1)
                 case RTW_CONNECT_SCAN_FAIL:
                     error_flag = RTW_NONE_NETWORK;
                     RTK_LOGI(NOTAG, "%d (Can not found target AP)\n", error_flag);
@@ -643,6 +685,24 @@ static void matter_wifi_join_status_event_hdl(char *buf, int buf_len, int flags,
                     error_flag = RTW_WRONG_PASSWORD;
                     RTK_LOGI(NOTAG, "%d (Wrong Password)\n", error_flag);
                     break;
+#elif (defined(CONFIG_AMEBARTOS_V1_1) && (CONFIG_AMEBARTOS_V1_1 == 1)) || \
+      (defined(CONFIG_AMEBARTOS_MASTER) && (CONFIG_AMEBARTOS_MASTER == 1))
+                case -RTK_ERR_WIFI_CONN_SCAN_FAIL:
+                    error_flag = RTW_NONE_NETWORK;
+                    RTK_LOGI(NOTAG, "%d (Can not found target AP)\n", error_flag);
+                    break;
+                case -RTK_ERR_WIFI_CONN_AUTH_FAIL:
+                case -RTK_ERR_WIFI_CONN_ASSOC_FAIL:
+                case -RTK_ERR_WIFI_CONN_4WAY_HANDSHAKE_FAIL:
+                    error_flag = RTW_CONNECT_FAIL;
+                    RTK_LOGI(NOTAG, "%d (Auth/Assoc/Handshake failed)\n", error_flag);
+                    break;
+                case -RTK_ERR_WIFI_CONN_AUTH_PASSWORD_WRONG:
+                case -RTK_ERR_WIFI_CONN_4WAY_PASSWORD_WRONG:
+                    error_flag = RTW_WRONG_PASSWORD;
+                    RTK_LOGI(NOTAG, "%d (Wrong Password)\n", error_flag);
+                    break;
+#endif
                 default:
                     error_flag = RTW_UNKNOWN;
                     RTK_LOGI(NOTAG, "%d (Unknown Error)\n", error_flag);
@@ -660,10 +720,37 @@ static void matter_wifi_join_status_event_hdl(char *buf, int buf_len, int flags,
     }
 }
 
+#if defined(CONFIG_AMEBARTOS_V1_0) && (CONFIG_AMEBARTOS_V1_0 == 1)
 void matter_wifi_reg_join_status_handler(void)
 {
     wifi_reg_event_handler(WIFI_EVENT_JOIN_STATUS, matter_wifi_join_status_event_hdl, NULL);
 }
+#elif (defined(CONFIG_AMEBARTOS_V1_1) && (CONFIG_AMEBARTOS_V1_1 == 1)) || \
+      (defined(CONFIG_AMEBARTOS_MASTER) && (CONFIG_AMEBARTOS_MASTER == 1))
+
+#if LWIP_IPV6
+void matter_dhcp_status_hdl(u8 *buf)
+{
+	struct rtw_event_dhcp_status *dhcp_info = (struct rtw_event_dhcp_status *)buf;
+	u8 dhcp_state = dhcp_info->dhcp_status;
+	if (DHCP_ADDRESS_ASSIGNED == dhcp_state) { //DHCP for ipv4 is assigned, continue for IPv6
+        matter_lwip_dhcp6();
+	}
+}
+#endif
+
+struct rtw_event_hdl_func_t event_external_hdl[] = {
+	{RTW_EVENT_JOIN_STATUS,			matter_wifi_join_status_event_hdl},
+#if LWIP_IPV6
+	{RTW_EVENT_DHCP_STATUS,			matter_dhcp_status_hdl},
+#endif
+};
+u16 array_len_of_event_external_hdl = sizeof(event_external_hdl) / sizeof(struct rtw_event_hdl_func_t);
+void matter_wifi_reg_join_status_handler(void)
+{
+    /* nothing to do here */
+}
+#endif // (CONFIG_AMEBARTOS_XXX)
 
 void matter_wifi_init(void)
 {

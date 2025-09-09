@@ -66,6 +66,7 @@ endif
 #                           ARM COMPILATION FLAGS
 #*****************************************************************************#
 
+GLOBAL_CFLAGS += -DCONFIG_AMEBARTOS_V1_0=1
 GLOBAL_CFLAGS += -DCONFIG_MATTER=1
 
 # CPP standards and language

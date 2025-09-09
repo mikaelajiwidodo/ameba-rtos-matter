@@ -33,7 +33,7 @@ void NS_ENTRY vMatterPrintSecureHeapStatus(void)
 }
 /*-----------------------------------------------------------*/
 
-#if defined(CONFIG_AMEBALITE)
+#if (defined(CONFIG_AMEBARTOS_V1_0) && (CONFIG_AMEBARTOS_V1_0 == 1)) && defined(CONFIG_AMEBALITE)
 void *rtos_mem_malloc(uint32_t size)
 {
 	return pvPortMalloc(size);

@@ -63,6 +63,7 @@ IFLAGS               += -I$(MATTER_DIR)/common/lwip/lwip_v2.1.2/port/realtek/inc
 #                           ARM COMPILATION FLAGS
 #*****************************************************************************#
 
+GLOBAL_CFLAGS += -DCONFIG_AMEBARTOS_V1_0=1
 GLOBAL_CFLAGS += -DCONFIG_MATTER=1
 
 # CPP standards and language

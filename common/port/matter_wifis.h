@@ -25,7 +25,6 @@ extern "C" {
 #endif
 
 #include <wifi_conf.h>
-#include <wifi_ind.h>
 #include <lwip_netconf.h>
 #include "rtw_wifi_constants.h"
 
@@ -93,6 +92,92 @@ typedef enum {
     MATTER_WIFI_EVENT_DHCP6_DONE,
     MATTER_WIFI_EVENT_MAX,
 } matter_wifi_event;
+
+// Added for ameba-rtos development branch support
+#if (defined(CONFIG_AMEBARTOS_MASTER) && (CONFIG_AMEBARTOS_MASTER == 1)) || \
+    (defined(CONFIG_AMEBARTOS_V1_1) && (CONFIG_AMEBARTOS_V1_1 == 1))
+
+/******************************************************
+ *         WiFi Modes
+ ******************************************************/
+typedef uint8_t rtw_mode_t;
+
+/******************************************************
+ *         WiFi Interface
+ ******************************************************/
+#define WLAN0_IDX   STA_WLAN_INDEX
+#define WLAN1_IDX   SOFTAP_WLAN_INDEX
+
+/******************************************************
+ *         WiFi Result
+ ******************************************************/
+typedef int rtw_result_t;
+
+/******************************************************
+ *         WiFi Scan Result
+ ******************************************************/
+#pragma pack(1) /*scan related structs are 1 byte alignment for some issues long long ago*/
+struct matter_scan_result {
+    struct rtw_ssid    SSID;             /**< SSID of the AP. */
+    struct rtw_mac     BSSID;            /**< BSSID (MAC address) of the AP. */
+    s16                signal_strength;  /**< Receive Signal Strength Indication (RSSI) in dBm: <-90 Very poor, >-30 Excellent. */
+    u8                 bss_type;         /**< BSS type. Common value: @ref RTW_BSS_TYPE_INFRASTRUCTURE.*/
+    u32                security;         /**< Security type of the AP: @ref RTW_SECURITY_OPEN, @ref RTW_SECURITY_WEP_PSK, etc. */
+    u8                 wps_type;         /**< WPS types supported by the AP: @ref RTW_WPS_TYPE_DEFAULT, @ref RTW_WPS_TYPE_USER_SPECIFIED, etc. */
+    u32                channel;          /**< Radio channel where the AP beacon was detected.*/
+    u8                 band;             /**< Frequency band used by the AP: @ref RTW_BAND_ON_5G, @ref RTW_BAND_ON_24G. */
+
+    /** The wireless spectrum management regulations followed by the AP. Coded according to ISO 3166 standard. \n
+     *  Reference: ameba_wifi_country_code_table_usrcfg.c for specific values. \n
+     *  Example: For China, country_code[0] = 'C', country_code[1] = 'N'. */
+    u8                 country_code[2];
+    u8                 wireless_mode;    /**< Wireless mode: @ref RTW_80211_B, @ref RTW_80211_A, etc.*/
+    u8                 rom_rsvd[3];
+};
+typedef struct matter_scan_result rtw_scan_result_t;
+#pragma pack()
+
+/******************************************************
+ *         WiFi Security
+ ******************************************************/
+typedef uint32_t rtw_security_t;
+
+/******************************************************
+ *         WiFi Settings
+ ******************************************************/
+typedef struct rtw_wifi_setting rtw_wifi_setting_t;
+
+/******************************************************
+ *         WiFi Event Handler
+ ******************************************************/
+typedef void (*rtw_event_handler_t)(char *buf, int buf_len, int flags, void *handler_user_data);
+
+/******************************************************
+ *         WiFi Mac Address
+ ******************************************************/
+typedef struct rtw_mac rtw_mac_t;
+
+/******************************************************
+ *         WiFi Network Info
+ ******************************************************/
+typedef struct rtw_network_info rtw_network_info_t;
+
+/******************************************************
+ *         WiFi Scan Parameter
+ ******************************************************/
+typedef struct rtw_scan_param rtw_scan_param_t;
+
+/******************************************************
+ *         WiFi Auto Reconnect
+ ******************************************************/
+#define wifi_config_autoreconnect wifi_set_autoreconnect
+
+/******************************************************
+ *         WiFi is connected to AP
+ ******************************************************/
+#define wifi_is_connected_to_ap matter_wifi_is_connected_to_ap
+
+#endif // CONFIG_AMEBARTOS_XXX
 
 /******************************************************
  *               WiFi Interface
