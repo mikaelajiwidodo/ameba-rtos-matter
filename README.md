@@ -52,13 +52,15 @@ Checkout the [Application Notes](https://github.com/Ameba-AIoT/ameba-rtos-matter
 
 ## Release History
 
-**Matter v1.4 and v1.3** is associated with the following SDKs:
-- AmebaRTOS SDK: [ameba-rtos](https://github.com/mikaelajiwidodo/ameba-rtos.git)
+**Matter v1.5-sve** status: WIP!!!
 
-| Matter Version | ameba-rtos branch                   | ameba-rtos-matter version | connectedhomeip version |
-|----------------|-------------------------------------|---------------------------|-------------------------|
-| Matter v1.4    | ameba-rtos-v1.0/matter/release/v1.4 | ameba-rtos/release/v1.4   | v1.4-branch             |
-| Matter v1.3    | ameba-rtos-v1.0/matter/release/v1.3 | ameba-rtos/release/v1.3   | (SHA) 70d9a614          |
+**Matter v1.4 and v1.3** is associated with the following SDKs:
+- AmebaRTOS SDK: [ameba-rtos:release/v1.0+matter](https://github.com/Ameba-AIoT/ameba-rtos/tree/release/v1.0%2Bmatter)
+
+| Matter Version | ameba-rtos branch   | ameba-rtos-matter version | connectedhomeip version |
+|----------------|---------------------|---------------------------|-------------------------|
+| Matter v1.4    | release/v1.0+matter | ameba-rtos/release/v1.4   | v1.4-branch             |
+| Matter v1.3    | release/v1.0+matter | ameba-rtos/release/v1.3   | (SHA) 70d9a614          |
 
 ## Directory Structure Overview
 

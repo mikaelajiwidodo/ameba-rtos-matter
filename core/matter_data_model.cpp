@@ -280,8 +280,8 @@ void Attribute::setValue(uint8_t *buffer)
 
 void Attribute::persistValue(uint8_t *buffer, size_t size)
 {
-    // Only store if value is set to be stored in NVS (represented by ATTRIBUTE_MASK_TOKENIZE flag)
-    if (getAttributeMask() & ATTRIBUTE_MASK_TOKENIZE)
+    // Only store if value is set to be stored in NVS (represented by MATTER_ATTRIBUTE_FLAG_TOKENIZE flag)
+    if (getAttributeMask() & MATTER_ATTRIBUTE_FLAG_TOKENIZE)
     {
         char key[64];
         sprintf(key, "g/a/%x/%x/%x", parentEndpointId, parentClusterId, attributeId); // g/a/endpoint_id/cluster_id/attribute_id
@@ -293,8 +293,8 @@ CHIP_ERROR Attribute::retrieveValue(uint8_t *buffer, size_t size)
 {
     int32_t error = -1;
 
-    // Only retrieved if value is set to be stored in NVS (represented by ATTRIBUTE_MASK_TOKENIZE flag)
-    if (!(getAttributeMask() & ATTRIBUTE_MASK_TOKENIZE))
+    // Only retrieved if value is set to be stored in NVS (represented by MATTER_ATTRIBUTE_FLAG_TOKENIZE flag)
+    if (!(getAttributeMask() & MATTER_ATTRIBUTE_FLAG_TOKENIZE))
     {
         return CHIP_ERROR_INTERNAL;
     }
@@ -733,6 +733,7 @@ void Endpoint::enableEndpoint()
     endpointType->endpointSize = 0;   // set to 0 as default
     endpointType->cluster = clusterType;
 
+    // TODO: AMEBA-RTOS-V1.1 BUGGY AT THE emberAfSetDynamicEndpoint
     // Register endpoint as dynamic endpoint in matter stack
     chip::DeviceLayer::PlatformMgr().LockChipStack();
     ChipError status = emberAfSetDynamicEndpoint(endpointIndex, endpointId, endpointType, chip::Span<chip::DataVersion>(dataVersion, clusters.size()), deviceTypeList, parentEndpointId);
@@ -847,7 +848,7 @@ void Endpoint::disableEndpoint()
         for (size_t j=0; j<cluster.attributes.size(); j++)
         {
             Attribute attribute = cluster.attributes[j];
-            if (cluster.attributes[j].getAttributeMask() & ATTRIBUTE_MASK_TOKENIZE)
+            if (cluster.attributes[j].getAttributeMask() & MATTER_ATTRIBUTE_FLAG_TOKENIZE)
             {
                 sprintf(key, "g/a/%x/%x/%x", attribute.getParentEndpointId(), attribute.getParentClusterId(), attribute.getAttributeId());
                 deleteKey(key, key);

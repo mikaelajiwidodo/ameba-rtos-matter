@@ -14,11 +14,11 @@ Navigate to `application/matter`:
 ```bash
     cd sdk
 
-    git clone https://github.com/Ameba-AIoT/ameba-rtos-matter.git component/application/matter
+    git clone https://github.com/mikaelajiwidodo/ameba-rtos-matter.git component/application/matter
 
     cd component/application/matter
 
-    git checkout ameba-rtos/release/v1.4
+    git checkout ameba-rtos-v1.1/v1.5-sve
 ```
 
 ### Method 2: Add Repository as a Submodule
@@ -29,11 +29,11 @@ Navigate to `application/matter`:
 ```bash
     cd sdk
 
-    git submodule add https://github.com/Ameba-AIoT/ameba-rtos-matter.git component/application/matter
+    git submodule add https://github.com/mikaelajiwidodo/ameba-rtos-matter.git component/application/matter
 
     cd component/application/matter
 
-    git checkout ameba-rtos/release/v1.4
+    git checkout ameba-rtos-v1.1/v1.5-sve
 ```
 
 Ensure to checkout to the respective branch/tag.
