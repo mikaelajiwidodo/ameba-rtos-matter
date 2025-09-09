@@ -55,7 +55,7 @@ MatterRefrigerator refrigerator;
 gpio_irq_t gpio_level;
 uint32_t current_level = IRQ_LOW;
 
-void matter_driver_gpio_level_irq_handler(uint32_t id, gpio_irq_event event)
+void matter_driver_gpio_level_irq_handler(uint32_t id, uint32_t event)
 {
     uint32_t *level = (uint32_t *) id;
 
