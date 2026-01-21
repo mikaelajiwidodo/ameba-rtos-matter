@@ -1,6 +1,5 @@
 ameba_list_append(matter_defintions
 
-    CONFIG_AMEBARTOS_V1_1=1
     CONFIG_MATTER=1
 
     # chip device options

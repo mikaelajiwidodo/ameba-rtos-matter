@@ -1,7 +1,10 @@
-set(BASEDIR ${c_BASEDIR})
-
 set(DIR                ${c_MBEDTLS_DIR})
+if(CONFIG_AMEBARTOS_MASTER)
+set(MATTER_DIR         ${EXAMPLEDIR})
+elseif(CONFIG_AMEBARTOS_V1_1)
+set(BASEDIR            ${c_BASEDIR})
 set(MATTER_DIR         ${BASEDIR}/component/application/matter)
+endif()
 set(MATTER_MBEDTLS_DIR ${MATTER_DIR}/common/mbedtls)
 
 ##########################################################################################
@@ -74,6 +77,8 @@ ameba_list_append(private_sources
     ${DIR}/library/platform_util.c
     ${DIR}/library/rsa.c
     ${DIR}/library/sha1.c
+    ${DIR}/library/sha256.c
+    ${DIR}/library/sha512.c
     ${DIR}/library/ssl_tls.c
     ${DIR}/library/x509_create.c
     ${DIR}/library/x509write_csr.c

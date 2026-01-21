@@ -119,7 +119,7 @@ ameba_list_append(private_sources
 )
 #matter modified memory_buffer_alloc.c to print debugger
 ameba_list_append(private_sources
-    ${c_CMPT_MATTER_DIR}/common/mbedtls/mbedtls-3.6.2/library/memory_buffer_alloc.c
+    ${MATTER_DIR}/common/mbedtls/mbedtls-3.6.2/library/memory_buffer_alloc.c
 )
 #matter_mbedtls source
 ameba_list_append(private_sources
