@@ -125,6 +125,9 @@ endif
 # matter factory data encryption options
 GLOBAL_CFLAGS += -DCONFIG_ENABLE_FACTORY_DATA_ENCRYPTION=0
 
+# matter OTP
+GLOBAL_CFLAGS += -DCONFIG_ENABLE_AMEBA_OTP=1
+
 # matter timer
 GLOBAL_CFLAGS += -DCONFIG_ENABLE_AMEBA_SNTP=0
 
