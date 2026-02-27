@@ -54,6 +54,9 @@ ameba_list_append(matter_defintions
     # matter factory data encryption options
     CONFIG_ENABLE_FACTORY_DATA_ENCRYPTION=0
 
+    # matter OTP
+    CONFIG_ENABLE_AMEBA_OTP=1
+
     # matter kv options
     CONFIG_ENABLE_KV_ENCRYPTION=0
 
