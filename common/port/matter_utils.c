@@ -24,6 +24,8 @@
 #define MATTER_FACTORY_DATA (0x08400000 - SPI_FLASH_BASE)
 #elif defined(CONFIG_AMEBASMART)
 #define MATTER_FACTORY_DATA (0x08644000 - SPI_FLASH_BASE)
+#elif defined(CONFIG_AMEBAGREEN2)
+#define MATTER_FACTORY_DATA (0x08440000 - SPI_FLASH_BASE)
 #endif
 #if CONFIG_ENABLE_AMEBA_OTP
 #define DAC_PRIV_KEY_LENGTH  32
@@ -494,7 +496,7 @@ int32_t ReadDacPrivateKeyFromOtp(uint8_t *dacPrivateKey)
 #endif
 
 #if defined(CONFIG_MATTER_SECURE) && CONFIG_MATTER_SECURE
-#if defined(CONFIG_AMEBADPLUS) || defined(CONFIG_AMEBALITE)
+#if defined(CONFIG_AMEBADPLUS) || defined(CONFIG_AMEBALITE) || defined(CONFIG_AMEBAGREEN2)
 #define MATTER_SECURE_CONTEXT_STACK_SIZE 4096
 extern int NS_ENTRY secure_mbedtls_platform_set_calloc_free(void);
 extern int NS_ENTRY matter_secure_dac_init_keypair(uint8_t *pub_buf, size_t pub_size);
@@ -592,7 +594,7 @@ int matter_get_signature(uint8_t *pub_buf, size_t pub_size, const unsigned char 
 {
     int result = 0;
 
-#if defined(CONFIG_AMEBADPLUS) || defined(CONFIG_AMEBALITE)
+#if defined(CONFIG_AMEBADPLUS) || defined(CONFIG_AMEBALITE) || defined(CONFIG_AMEBAGREEN2)
     matter_create_secure_context();
 #elif defined(CONFIG_AMEBASMART)
     matter_init_matter_secure_mbedtls();
@@ -604,7 +606,7 @@ int matter_get_signature(uint8_t *pub_buf, size_t pub_size, const unsigned char 
         goto exit;
     }
 
-#if defined(CONFIG_AMEBADPLUS) || defined(CONFIG_AMEBALITE)
+#if defined(CONFIG_AMEBADPLUS) || defined(CONFIG_AMEBALITE) || defined(CONFIG_AMEBAGREEN2)
     result = matter_secure_ecdsa_sign_msg(MATTER_DACKEY_KEY_TYPE, msg, msg_size, signature);
 #elif defined(CONFIG_AMEBASMART)
     result = matter_secure_dackey_ecdsa_sign_msg(msg, msg_size, signature);
@@ -622,7 +624,7 @@ int matter_ecdsa_sign_msg(const unsigned char *msg, size_t msg_size, unsigned ch
 {
     int result = 0;
 
-#if defined(CONFIG_AMEBADPLUS) || defined(CONFIG_AMEBALITE)
+#if defined(CONFIG_AMEBADPLUS) || defined(CONFIG_AMEBALITE) || defined(CONFIG_AMEBAGREEN2)
     result = matter_secure_ecdsa_sign_msg(MATTER_OPKEY_KEY_TYPE, msg, msg_size, signature);
 #elif defined(CONFIG_AMEBASMART)
     result = matter_secure_opkey_ecdsa_sign_msg(msg, msg_size, signature);
@@ -674,7 +676,7 @@ int matter_deserialize(uint8_t *buf, size_t size)
 {
     int result = 0;
 
-#if defined(CONFIG_AMEBADPLUS) || defined(CONFIG_AMEBALITE)
+#if defined(CONFIG_AMEBADPLUS) || defined(CONFIG_AMEBALITE) || defined(CONFIG_AMEBAGREEN2)
     matter_create_secure_context();
 #elif defined(CONFIG_AMEBASMART)
     matter_init_matter_secure_mbedtls();
@@ -691,7 +693,7 @@ int matter_deserialize(uint8_t *buf, size_t size)
 
 void matter_check_secure_heap_status(void)
 {
-#if defined(CONFIG_AMEBADPLUS) || defined(CONFIG_AMEBALITE)
+#if defined(CONFIG_AMEBADPLUS) || defined(CONFIG_AMEBALITE) || defined(CONFIG_AMEBAGREEN2)
     vMatterPrintSecureHeapStatus();
 #elif defined(CONFIG_AMEBASMART)
     matter_secure_print_mbedtls_heap_status();
