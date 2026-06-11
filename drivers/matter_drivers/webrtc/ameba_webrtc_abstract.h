@@ -29,6 +29,9 @@
 class WebRTCPeerConnection;
 class WebRTCTrack;
 
+/* Forward declaration of C session type from library */
+struct ameba_webrtc_session;
+
 enum class SDPType : uint8_t
 {
     Offer,
@@ -89,6 +92,13 @@ public:
     virtual void AddRemoteCandidate(const std::string & candidate, const std::string & mid)                      = 0;
     virtual std::shared_ptr<WebRTCTrack> AddTrack(MediaType mediaType, const std::string & mid, int payloadType) = 0;
     virtual int GetPayloadType(const std::string & sdp, SDPType type, const std::string & codec) { return -1; };
+
+    /**
+     * Get the underlying C WebRTC session (ameba_webrtc_session_t).
+     * Used by the transport layer to access ICE/DTLS directly.
+     * Returns NULL if not available.
+     */
+    virtual struct ameba_webrtc_session * GetSession() { return nullptr; };
 };
 
 std::shared_ptr<WebRTCPeerConnection> CreateWebRTCPeerConnection(const std::vector<ICEServerInfo> & iceServers = {});

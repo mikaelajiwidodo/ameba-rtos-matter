@@ -27,6 +27,9 @@
 #include <webrtc/ameba_webrtc_abstract.h>
 #include <lib/core/DataModelTypes.h>
 #include <lib/core/ScopedNodeId.h>
+#include <system/SystemLayer.h>
+#include <lwip/sockets.h>
+#include <lwip/inet.h>
 
 #include <string>
 #include <vector>
@@ -135,7 +138,52 @@ public:
     void SetRequestArgs(const RequestArgs & args);
     RequestArgs & GetRequestArgs();
 
+    // AI generated starts
+    // Start/Stop dummy media streaming (for testing)
+    void StartStreaming();
+    void StopStreaming();
+
+    // Check if streaming is active
+    bool IsStreaming() const { return mStreamingActive; }
+    // AI generated ends
+
 private:
+
+    // AI generated starts
+    // ── Dummy Frame Generation Task ────────────────────────────────
+    static void StreamingTaskCallback(void * context);
+    void StreamingTask();
+
+    // Generate dummy H.264 video frame (simple colored pattern as IDR)
+    int GenerateDummyH264Frame(uint8_t * buffer, size_t bufferSize, uint32_t timestamp);
+
+    // Generate dummy Opus audio frame (simple tone)
+    int GenerateDummyOpusFrame(uint8_t * buffer, size_t bufferSize, uint32_t timestamp);
+
+    // Streaming control
+    bool mStreamingActive = false;
+    rtos_task_t mStreamingTaskHandle = NULL;
+
+    // Static buffers for streaming task (to avoid stack overflow)
+    static uint8_t sVideoBuffer[1400];
+    static uint8_t sAudioBuffer[256];
+
+    // ── ICE/UDP Transport ─────────────────────────────────────────
+    void InitUdpSocket();
+    void DestroyUdpSocket();
+
+    // ── Periodic ICE Tick Timer ────────────────────────────────────
+    static void OnICETickTimerCallback(chip::System::Layer * systemLayer, void * appState);
+    void OnICETick();
+    void StartICETimer();
+    void StopICETimer();
+
+    // ── Member variables ──────────────────────────────────────────
+    int mUdpSocket           = -1;
+    bool mIceStarted         = false;
+    bool mICETimerRunning    = false;
+    // AI generated ends
+
     CommandType mCommandType = CommandType::kUndefined;
     State mState             = State::Idle;
 

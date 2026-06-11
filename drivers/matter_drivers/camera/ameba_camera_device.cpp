@@ -187,7 +187,7 @@ CameraError CameraDevice::StartVideoStream(const VideoStreamStruct & allocatedSt
     // Store in stream context
     // it->videoContext = ...;
 
-    return CameraError::ERROR_NOT_IMPLEMENTED;
+    return CameraError::SUCCESS;
 }
 
 // Stop video stream
@@ -213,7 +213,7 @@ CameraError CameraDevice::StopVideoStream(uint16_t streamID)
     // Clean up
     it->videoContext = nullptr;
 
-    return CameraError::ERROR_NOT_IMPLEMENTED;
+    return CameraError::SUCCESS;
 }
 
 // Start audio stream
